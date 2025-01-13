@@ -57,7 +57,9 @@ You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zer
 
 ![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/firefox_step1.png)
 
-![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/iphone_step1.png)
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/iphone_step1.jpg)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/iphone_step2.jpg)
 
 ## Known Issues
 
