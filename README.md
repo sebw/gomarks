@@ -1,8 +1,10 @@
 # GoMarks
 
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/favicon.png)
+
 Yet another Golinks manager.
 
-Create smart bookmarks and make GoMarks your default search engine to speed up your browsing experience.
+Create smart shortcuts/bookmarks/aliases and make GoMarks your default search engine to speed up your browsing experience.
 
 Similar to Duckduckgo <code>!bangs</code> or the multitude of self-hosted Golinks manager (see below for some alternatives).
 
@@ -10,20 +12,20 @@ Bangs are pretty cool but it means requests always transit through Duckduckgo.
 
 ## Features
 
-- can act as your default search engine, enabled in 2 easy steps (tested in Firefox and Chrome)
-- smart links to redirect to websites
-- smart links with placeholder <code>%s</code> to redirect to websites with search engines (example: Amazon)
-- if your query doesn't match any smart link, your query is sent to your fallback search engine
-- configurable fallback search engine (Google, Duckduckgo, Bing)
-- configurable custom fallback search engine (self-hosted Searx, Whoogle, etc.)
-- usage statistics
-- reset statistics per smart link or for all links
-- all information are stored in a sqlite database, allowing to manipulate and backup your data easily
+- can act as your default search engine in Firefox, Chrome and iPhone
+- simple shortcuts to redirect to websites (example: bbc takes you to BBC website)
+- smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: "amazon rasberry pi 5" takes you immediately to Amazon's results for Raspberry)
+- if your query doesn't match any smart link, your query is sent to your preferred search engine
+- shortcuts usage statistics
+- reset statistics per shortcut or all
+- queries history
+- possibility to delete history
+- configuration is stored in a sqlite database, allowing to manipulate and backup your data easily
 - can run with Docker, Podman or Kubernetes or as a standalone binary
 
 ## But Why?
 
-I wanted to learn the basics of Go and create something useful for myself.
+I wanted to learn the basics of Go over a week-end and the Golinks manager I've been using for 3 years was lacking a few features I wanted.
 
 Oh, you wanted to know why the logo is a bunny? Historically one of the first Golinks manager was called bunny1. But mostly, I have 3 pet rabbits!
 
@@ -33,7 +35,9 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
 
-## Build
+Your GoMarks instance runs at `http://localhost:8080`.
+
+## Build Your Own Image
 
 ```bash
 docker build -f Dockerfile -t gomarks:0.1
@@ -41,7 +45,11 @@ docker build -f Dockerfile -t gomarks:0.1
 
 ## Security
 
-There's no authentication, user or certificate management. You MUST secure GoMarks behind something like Let's Encrypt, Authentik, Authelia or Cloudflare.
+There's no authentication, users management or certificates. 
+
+An internet exposed gomarks can be used maliciously.
+
+You MUST secure GoMarks behind things like Let's Encrypt, Authentik, Authelia or Cloudflare.
 
 You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zero-trust-authentik/) to secure GoMarks (SSO + HTTPS) behind Cloudflare and Authentik.
 
