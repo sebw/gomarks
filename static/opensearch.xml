@@ -1,0 +1,9 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>GoMarks</ShortName>
+  <Description>Search with GoMarks</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Contact>github@wains.be</Contact>
+  <LongName>GoMarks Search</LongName>
+  <Url type="text/html" method="get" template="https://go.wains.be/go/?q={searchTerms}"/>
+  <Url type="application/x-suggestions+json" method="get" template="https://suggestqueries.google.com/complete/search?client=firefox&amp;ds=yt&amp;q={searchTerms}"/>
+</OpenSearchDescription>
