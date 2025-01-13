@@ -37,6 +37,8 @@ docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/da
 
 Your GoMarks instance runs at `http://localhost:8080`.
 
+Go to the help section for instructions.
+
 ## Build Your Own Image
 
 ```bash
