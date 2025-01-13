@@ -2,7 +2,7 @@
 
 ![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/favicon.png)
 
-Yet another Golinks manager.
+Yet another self-hosted Golinks manager.
 
 Create smart shortcuts/bookmarks/aliases and make GoMarks your default search engine to speed up your browsing experience.
 
@@ -12,7 +12,9 @@ Bangs are pretty cool but it means requests always transit through Duckduckgo.
 
 ## Features
 
-- can act as your default search engine in Firefox, Chrome and iPhone
+- can run with Docker, Podman or Kubernetes or as a standalone binary
+- can run locally or anywhere (read security section!)
+- can act as your default search engine in Firefox, Chrome or even iPhone. No DNS or local host files tweaking needed.
 - simple shortcuts to redirect to websites (example: bbc takes you to BBC website)
 - smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: "amazon rasberry pi 5" takes you immediately to Amazon's results for Raspberry)
 - if your query doesn't match any smart link, your query is sent to your preferred search engine
@@ -21,7 +23,6 @@ Bangs are pretty cool but it means requests always transit through Duckduckgo.
 - queries history
 - possibility to delete history
 - configuration is stored in a sqlite database, allowing to manipulate and backup your data easily
-- can run with Docker, Podman or Kubernetes or as a standalone binary
 
 ## But Why?
 
