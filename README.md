@@ -67,7 +67,7 @@ Your GoMarks instance runs at `http://localhost:8080`.
 
 Go to the help section for instructions.
 
-<id="build"></a>
+<a id="build"></a>
 ## Build Your Own Image
 
 ```bash
