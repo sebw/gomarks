@@ -33,6 +33,12 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
 
+## Build
+
+```bash
+docker build -f Dockerfile -t gomarks:0.1
+```
+
 ## Security
 
 There's no authentication, user or certificate management. You MUST secure GoMarks behind something like Let's Encrypt, Authentik, Authelia or Cloudflare.
@@ -41,7 +47,17 @@ You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zer
 
 ## Screenshots
 
-TODO
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/screenshots/index.png)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/screenshots/edit.png)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/screenshots/fallback.png)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/chrome_step1.png)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/firefox_step1.png)
+
+![](https://raw.githubusercontent.com/sebw/gomarks/refs/heads/main/static/help/iphone_step1.png)
 
 ## Known Issues
 

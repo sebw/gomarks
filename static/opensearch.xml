@@ -4,6 +4,6 @@
   <InputEncoding>UTF-8</InputEncoding>
   <Contact>github@wains.be</Contact>
   <LongName>GoMarks Search</LongName>
-  <Url type="text/html" method="get" template="https://go.wains.be/go/?q={searchTerms}"/>
+  <Url type="text/html" method="get" template="http://localhost:8080/go/?q={searchTerms}"/>
   <Url type="application/x-suggestions+json" method="get" template="https://suggestqueries.google.com/complete/search?client=firefox&amp;ds=yt&amp;q={searchTerms}"/>
 </OpenSearchDescription>
