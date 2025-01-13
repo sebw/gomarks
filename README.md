@@ -17,6 +17,7 @@ Bangs are pretty cool but it means requests always transit through Duckduckgo.
 - can act as your default search engine in Firefox, Chrome or even iPhone. No DNS or local host files tweaking needed.
 - simple shortcuts to redirect to websites (example: bbc takes you to BBC website)
 - smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: "amazon rasberry pi 5" takes you immediately to Amazon's results for Raspberry)
+- single word placeholder. `docker alpine` takes you to Docker Hub but `docker version openshift` takes you to your preferred search engine.
 - if your query doesn't match any smart link, your query is sent to your preferred search engine
 - shortcuts usage statistics
 - reset statistics per shortcut or all
