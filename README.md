@@ -95,7 +95,7 @@ If the feature is actually useful for myself, I might implement it in the main b
 - [Tailscale's golink](https://github.com/tailscale/golink): if you use Tailscale, golink provides short names for your services running in your tailnets. I don't use Tailscale so a few things don't work.
 - [Trotto](https://github.com/trotto/go-links): Postgres backed solution, aimed at teams.
 - [golinks.io](https://github.com/GoLinks/golinks): An AI-DrIvEn PlAtFoRm to retrieve and share information in seconds with internal short links, called Go Links®. Empowering teams to move faster and remain focused.
-- Bunny1: one of the first Golinks manager, not linking because the website has been taken with ads.
+- Bunny1: one of the first Golinks manager, not linking because the website has been taken over by ads. Seriously, don't go to that website.
 
 ## Acknowledgements
 
