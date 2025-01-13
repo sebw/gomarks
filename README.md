@@ -10,6 +10,8 @@ Similar to Duckduckgo <code>!bangs</code> or the multitude of self-hosted Golink
 
 Bangs are pretty cool but it means requests always transit through Duckduckgo.
 
+DEMO INSTANCE (reset every 20 minutes): [https://gomarks.labo.ovh/](https://gomarks.labo.ovh/)
+
 ## Features
 
 - can run with Docker, Podman or Kubernetes or as a standalone binary
@@ -36,6 +38,8 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 ```bash
 docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
+
+Use `ghcr.io/sebw/gomarks:latest-arm` on ARM based machines.
 
 Your GoMarks instance runs at `http://localhost:8080`.
 
