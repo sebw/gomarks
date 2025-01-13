@@ -74,7 +74,7 @@ Go to the help section for instructions.
 docker build -f Dockerfile -t gomarks:0.1
 ```
 
-<id="security"></a>
+<a id="security"></a>
 ## Security
 
 There's no authentication, users management or certificates. 
