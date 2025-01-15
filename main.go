@@ -1179,7 +1179,6 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	<br>
 	<h3 id="simple">Simple shortcuts</h3>
 
-
 	A keyword <code>bbc</code> can take you to the destination URL <code>https://www.bbc.com</code>.</p>
 
 	Simple shortcuts can't take options (like <code>bbc europe</code>) because they are simple, not smart.
