@@ -350,7 +350,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			}
 		</script>
 
-		<p><a href="/reserved">Configure action reserved keywords</a></p>
+		<p><a href="/reserved">Configure reserved action keywords</a></p>
 
 		<p><a href="/fallback">Configure fallback search engine</a></p>
 
@@ -479,6 +479,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 
 	// Query has been provided, let's get to work
 	if query != "" {
+
 		// Add query to history
 		_, err := db.Exec("INSERT INTO queries (keyword) VALUES (?)", query)
 		if err != nil {
@@ -524,11 +525,13 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// prevents adding shortcuts using reserved keywords
-		if words[1] == reserved_add || words[1] == reserved_mod || words[1] == reserved_del {
-			http.Error(w, "This keyword is reserved.", http.StatusInternalServerError)
-			return
+		if len(words) > 1 {
+			if words[1] == reserved_add || words[1] == reserved_mod || words[1] == reserved_del {
+				http.Error(w, "This keyword is reserved.", http.StatusInternalServerError)
+				return
+			}
 		}
-		
+
 		// add action
 		if keyword == reserved_add {
 			// add expects a keyword, a URL and potentially single on URLs with placeholder
@@ -1051,7 +1054,7 @@ func handleReserved(w http.ResponseWriter, r *http.Request) {
     </script>
 	</head>
 	<body>
-		<h2><a href="/">Configure reserved keywords</a></h2>
+		<h2><a href="/">Configure reserved action keywords</a></h2>
 		<form action="/reserved-post/" method="post">
 			<label for="add">Add shortcut</label>
 			<input type="text" name="add" value="{{.Add}}" required autocomplete="off"></p>
@@ -1232,7 +1235,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Action keywords do not appear in the list.</p>
 
-	You can reconfigure reserved keywords in the administration section if they conflict with your workflow.</p>
+	You can reconfigure reserved action keywords in the administration section if they conflict with your workflow.</p>
 
 	<table class="reservedkeywords">
 	<tr>
