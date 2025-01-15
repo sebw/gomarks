@@ -274,6 +274,8 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
         const addedShortcut = params.get('added');
         const modifiedShortcut = params.get('modified');
         const deletedShortcut = params.get('deleted');
+        const modifiedFallback = params.get('fallback');
+        const modifiedReserved = params.get('reserved');
         if (addedShortcut) {
             showPopup('New shortcut ' + addedShortcut + ' has been added!', 5000);
         }
@@ -282,6 +284,12 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
         }
         if (deletedShortcut) {
             showPopup('Shortcut ' + deletedShortcut + ' has been deleted!', 5000);
+        }
+        if (modifiedFallback) {
+            showPopup('Fallback search engine has been updated!', 5000);
+        }
+        if (modifiedReserved) {
+            showPopup('Reserved keywords have been updated!', 5000);
         }
     </script>
 
@@ -1042,7 +1050,7 @@ func handleFallbackPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?fallback=updated", http.StatusSeeOther)
 }
 
 func handleClear(w http.ResponseWriter, r *http.Request) {
@@ -1130,7 +1138,7 @@ func handleReservedPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?reserved=updated", http.StatusSeeOther)
 }
 
 func handleHelp(w http.ResponseWriter, r *http.Request) {
