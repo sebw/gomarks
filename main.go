@@ -1230,7 +1230,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	</tr>
 	</table>
 <br>
-    <h3 id="browser">Reserved action keywords</h3>
+    <h3 id="reserved">Reserved action keywords</h3>
 	Some keywords are reserved to perform GoMarks actions without necessarily using the web interface.</p>
 
 	Action keywords do not appear in the list.</p>
