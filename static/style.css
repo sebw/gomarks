@@ -20,6 +20,13 @@ h1 {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 	border-radius: 4px;
 }
+.reservedkeywords {
+	width: 60%;
+	margin: 0 auto;
+	border-collapse: collapse;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	border-radius: 4px;
+}
 .fallback {
 	width: 420;
 	margin: 0 auto;
