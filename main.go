@@ -86,11 +86,14 @@ func main() {
 	}
 
 	if rowCount == 0 {
-		log.Println("Setting Duckduckgo as the fallback search engine")
+		log.Println("Configure default settings")
 		// Insert some default settings
 		insertDataQuery := `
-		INSERT INTO settings (setting, value) VALUES
-			('fallback_url', 'https://www.duckduckgo.com/?q={searchTerms}');`
+		INSERT INTO settings (setting, value) VALUES ('fallback_url', 'https://www.duckduckgo.com/?q={searchTerms}');
+		INSERT INTO settings (setting, value) VALUES ('keyword_add', '!add');
+		INSERT INTO settings (setting, value) VALUES ('keyword_mod', '!mod');
+		INSERT INTO settings (setting, value) VALUES ('keyword_del', '!del');
+		`
 		_, err = db.Exec(insertDataQuery)
 		if err != nil {
 			log.Fatalf("Failed to insert data: %v", err)
@@ -114,9 +117,12 @@ func main() {
 	http.HandleFunc("/reset-all", handleResetAll)
 	http.HandleFunc("/mod/", handleMod)
 	http.HandleFunc("/mod-post/", handleModPost)
+	http.HandleFunc("/del/", handleDel)
+	http.HandleFunc("/del-post/", handleDelPost)
 	http.HandleFunc("/fallback/", handleFallback)
 	http.HandleFunc("/fallback-post/", handleFallbackPost)
-	http.HandleFunc("/del/", handleDel)
+	http.HandleFunc("/reserved/", handleReserved)
+	http.HandleFunc("/reserved-post/", handleReservedPost)
 	http.HandleFunc("/clear/", handleClear)
 	http.HandleFunc("/help/", handleHelp)
 
@@ -248,7 +254,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	<body>
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.1</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required>
@@ -344,6 +350,8 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			}
 		</script>
 
+		<p><a href="/reserved">Configure action reserved keywords</a></p>
+
 		<p><a href="/fallback">Configure fallback search engine</a></p>
 
 
@@ -375,8 +383,6 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-
 func handleAdd(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method.", http.StatusMethodNotAllowed)
@@ -388,6 +394,31 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 	singlewordvalue := r.FormValue("singleword")
 	if name == "" || url == "" {
 		http.Error(w, "Keyword and URL cannot be empty.", http.StatusBadRequest)
+		return
+	}
+
+	// Block shortcut creation using reserved keywords
+	var reserved_add string
+	err := db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_add'").Scan(&reserved_add)
+	if err != nil {
+		http.Error(w, "Failed to query keyword_add.", http.StatusInternalServerError)
+		return
+	}
+	var reserved_mod string
+	err = db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_mod'").Scan(&reserved_mod)
+	if err != nil {
+		http.Error(w, "Failed to query keyword_mod.", http.StatusInternalServerError)
+		return
+	}
+	var reserved_del string
+	err = db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_del'").Scan(&reserved_del)
+	if err != nil {
+		http.Error(w, "Failed to query keyword_del.", http.StatusInternalServerError)
+		return
+	}
+
+	if name == reserved_add || name == reserved_mod || name == reserved_del {
+		http.Error(w, "This keyword is reserved.", http.StatusInternalServerError)
 		return
 	}
 
@@ -409,7 +440,7 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	} 
 
-	_, err := db.Exec("INSERT INTO items (name, url, singleword) VALUES (?, ?, ?)", name, url, singleword)
+	_, err = db.Exec("INSERT INTO items (name, url, singleword) VALUES (?, ?, ?)", name, url, singleword)
 	if err != nil {
 		http.Error(w, "Failed to add shortlink. Ensure the keyword is unique.", http.StatusInternalServerError)
 		return
@@ -472,6 +503,103 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 			second_word_and_all = strings.Join(words[1:], " ")
 		}
 		
+		// Check if keyword matches any reserved keyword
+		var reserved_add string
+		err = db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_add'").Scan(&reserved_add)
+		if err != nil {
+			http.Error(w, "Failed to query keyword_add.", http.StatusInternalServerError)
+			return
+		}
+		var reserved_mod string
+		err = db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_mod'").Scan(&reserved_mod)
+		if err != nil {
+			http.Error(w, "Failed to query keyword_mod.", http.StatusInternalServerError)
+			return
+		}
+		var reserved_del string
+		err = db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_del'").Scan(&reserved_del)
+		if err != nil {
+			http.Error(w, "Failed to query keyword_del.", http.StatusInternalServerError)
+			return
+		}
+
+		// prevents adding shortcuts using reserved keywords
+		if words[1] == reserved_add || words[1] == reserved_mod || words[1] == reserved_del {
+			http.Error(w, "This keyword is reserved.", http.StatusInternalServerError)
+			return
+		}
+		
+		// add action
+		if keyword == reserved_add {
+			// add expects a keyword, a URL and potentially single on URLs with placeholder
+			if words_counting <= 2 {
+				http.Error(w, "Adding a link requires some options.\n\nsimple URL:\nadd mykeyword https://example.com/\n\nplaceholder URL:\nadd mykeyword https://example.com/%s\n\nsingle word placeholder URL:\nadd mykeyword https://example.com/%s", http.StatusBadRequest)
+				return
+			}
+
+			// simple URL or placeholder URL
+			if words_counting >= 3 {
+				name := words[1]
+				url := words[2]
+
+				if strings.Contains(url, "http") {
+
+				// if 1 is passed
+				if len(words) == 4 {
+					if words[3] == "1" {
+						// check if URL contains placeholder, otherwise requested singleword is useless
+						if strings.Contains(url, "%s") && strings.Count(url, "%s") > 1 {
+							http.Error(w, "You can only have one placeholder in the URL.", http.StatusInternalServerError)
+							return
+						}
+						if strings.Contains(url, "%s") && strings.Count(url, "%s") == 1 {
+							singleword = 1
+						} else {
+							http.Error(w, "You requested single word placeholder but your URL doesn't have a placeholder.", http.StatusInternalServerError)
+							return
+						}
+					}
+				}
+			} else {
+				http.Error(w, "" + keyword + " is a reserved keyword for adding links.\n\nWhen adding a link, we expect 'http' in the URL.\n\nYou can reconfigure reserved keywords if they conflict with your web searches.", http.StatusInternalServerError)
+				return
+			}
+
+				_, err := db.Exec("INSERT INTO items (name, url, singleword) VALUES (?, ?, ?)", name, url, singleword)
+				if err != nil {
+					http.Error(w, "Failed to add shortlink. Ensure the keyword is unique.", http.StatusInternalServerError)
+					return
+				} else {
+					http.Redirect(w, r, "/", http.StatusSeeOther)
+					return
+				}
+			}
+
+		}
+
+		// mod action
+		if keyword == reserved_mod {
+			// modification requires exactly two words (reserved_mod + keyword you want to edit)
+			if words_counting != 2 {
+				http.Error(w, "Modifying a link takes one option as argument.\n\nExample usage: " + reserved_mod + " keyword_you_want_to_modify", http.StatusBadRequest)
+				return
+			}
+
+			http.Redirect(w, r, "/mod/" + words[1], http.StatusSeeOther)
+			return
+		}
+
+		// del action
+		if keyword == reserved_del {
+			// delete requires exactly two words (reserved_mod + keyword you want to delete)
+			if words_counting != 2 {
+				http.Error(w, "Deleting a link requires exactly one option.\n\nExample usage: " + reserved_del + " keyword_you_want_to_delete", http.StatusBadRequest)
+				return
+			}
+
+			http.Redirect(w, r, "/del/" + words[1], http.StatusSeeOther)
+			return
+		}
 
 		// Assess the first word in the query and check if a keyword matches
 		// We force lowercase to make things case insensitive
@@ -489,7 +617,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 			url = strings.ReplaceAll(fallback_url, "{searchTerms}", query)
 		}
 
-		// if keyword found, fetch the destination URL
+		// if keyword is not reserved and found, fetch the destination URL
 		if keyword_found == 1 {
 			err = db.QueryRow("SELECT url, singleword FROM items WHERE LOWER(name) = LOWER(?)", keyword).Scan(&destination_url, &singleword)
 			if err != nil {
@@ -686,10 +814,64 @@ func handleDel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Delete the shortlink from the database
-	_, err := db.Exec("DELETE FROM items WHERE name = ?", name)
+	var item struct {
+		ID   int
+		Name string
+		URL  string
+		Singleword int
+		Checkbox string
+	}
+
+	err := db.QueryRow("SELECT id, name, url, singleword FROM items WHERE LOWER(name) = LOWER(?)", name).Scan(&item.ID, &item.Name, &item.URL, &item.Singleword)
 	if err != nil {
-		http.Error(w, "Failed to delete link.", http.StatusInternalServerError)
+		http.Error(w, "Keyword not found.", http.StatusNotFound)
+		return
+	}
+
+	// Render the edit page
+	tmpl := `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>GoMarks - Edit Link</title>
+		<link rel="stylesheet" href="/static/style.css">
+		<script>
+		function goToIndex() {
+			window.location.href = "/";
+		}
+		</script>
+	</head>
+	<body>
+		<h2><a href="/">Are you sure you want to delete this shortcut?</a></h2>
+		<form action="/del-post/{{.Name}}" method="post">
+			<input type="text" name="name" value="{{.Name}}" placeholder="Keyword" disabled>
+			<input type="url" name="url" id="url" value="{{.URL}}" placeholder="Destination URL" required autocomplete="off" disabled>
+			<label for="singleword">Force 1️⃣ single word placeholder</label>
+			<input type="checkbox" id="singleword" name="singleword" {{if eq .Singleword 1}}checked{{end}} {{.Checkbox}} disabled>
+			<button type="submit">I'm sure!</button></p>
+			<button type="button" onclick="goToIndex()">Cancel</button>
+		</form>
+	</body>
+	</html>
+	`
+
+	tmplParsed := template.Must(template.New("delete").Parse(tmpl))
+	tmplParsed.Execute(w, item)
+}
+
+func handleDelPost(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Path[len("/del-post/"):]
+	if name == "" {
+		http.Error(w, "Keyword is required to modify a link.", http.StatusBadRequest)
+		return
+	}
+
+	// Delete the entry
+	_, err := db.Exec("DELETE FROM items WHERE name = LOWER(?);", name)
+	if err != nil {
+		http.Error(w, "Failed to delete the link.", http.StatusInternalServerError)
 		return
 	}
 
@@ -832,6 +1014,89 @@ func handleClear(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+func handleReserved(w http.ResponseWriter, r *http.Request) {
+	var item struct {
+		Add string
+        Mod string
+        Del string
+	}
+	err := db.QueryRow("SELECT value FROM settings WHERE setting='keyword_add'").Scan(&item.Add)
+	if err != nil {
+		http.Error(w, "Reserved URL not found.", http.StatusNotFound)
+		return
+	}
+	err = db.QueryRow("SELECT value FROM settings WHERE setting='keyword_mod'").Scan(&item.Mod)
+	if err != nil {
+		http.Error(w, "Reserved URL not found.", http.StatusNotFound)
+		return
+	}
+    err = db.QueryRow("SELECT value FROM settings WHERE setting='keyword_del'").Scan(&item.Del)
+	if err != nil {
+		http.Error(w, "Reserved URL not found.", http.StatusNotFound)
+		return
+	}
+	// Render the edit page
+	tmpl := `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>GoMarks</title>
+		<link rel="stylesheet" href="/static/style.css">
+	    <script>
+        function goToIndex() {
+            window.location.href = "/";
+        }
+    </script>
+	</head>
+	<body>
+		<h2><a href="/">Configure reserved keywords</a></h2>
+		<form action="/reserved-post/" method="post">
+			<label for="add">Add shortcut</label>
+			<input type="text" name="add" value="{{.Add}}" required autocomplete="off"></p>
+			<label for="add">Modify shortcut</label>
+            <input type="text" name="mod" value="{{.Mod}}" required autocomplete="off"></p>
+			<label for="add">Delete shortcut</label>
+            <input type="text" name="del" value="{{.Del}}" required autocomplete="off"></p>
+			<button type="submit">Save</button></p>
+			<button type="button" onclick="goToIndex()">Cancel</button>
+		</form>
+    </table>
+	</body>
+	</html>
+	`
+
+	tmplParsed := template.Must(template.New("edit").Parse(tmpl))
+	tmplParsed.Execute(w, item)
+}
+
+func handleReservedPost(w http.ResponseWriter, r *http.Request) {
+	// Get updated reserved URL from the form
+	newAdd := r.FormValue("add")
+	newMod := r.FormValue("mod")
+	newDel := r.FormValue("del")
+
+	// Update the reserved URL in the database
+	_, err := db.Exec("UPDATE settings SET value = ? WHERE setting='keyword_add'", newAdd)
+	if err != nil {
+		http.Error(w, "Failed to update reserved keyword.", http.StatusInternalServerError)
+		return
+	}
+    _, err = db.Exec("UPDATE settings SET value = ? WHERE setting='keyword_mod'", newMod)
+	if err != nil {
+		http.Error(w, "Failed to update reserved keyword.", http.StatusInternalServerError)
+		return
+	}
+    _, err = db.Exec("UPDATE settings SET value = ? WHERE setting='keyword_del'", newDel)
+	if err != nil {
+		http.Error(w, "Failed to update reserved keyword.", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func handleHelp(w http.ResponseWriter, r *http.Request) {
 	// Define the HTML content as a template
 	tmpl := template.Must(template.New("static").Parse(`
@@ -847,7 +1112,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<h2><a href="/">GoMarks Help</a></h2>
 
-	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a>
+	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a> | <a href="/help/#reserved">Reserved keywords</a>
 	<br>
 	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a>
 <br><br><br>
@@ -962,6 +1227,46 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	</tr>
 	</table>
 <br>
+    <h3 id="browser">Reserved action keywords</h3>
+	Some keywords are reserved to perform GoMarks actions without necessarily using the web interface.</p>
+
+	Action keywords do not appear in the list.</p>
+
+	You can reconfigure reserved keywords in the administration section if they conflict with your workflow.</p>
+
+	<table class="reservedkeywords">
+	<tr>
+		<th>Default keyword</th>
+		<th>Example</th>
+		<th>Action</th>
+	</tr>
+	<tr>
+		<td>!add</td>
+		<td>!add myshortcut https://www.example.com</td>
+		<td>adds a simple shortcut</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>!add myshortcut https://www.example.com/%s</td>
+		<td>adds a placeholder shortcut</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>!add myshortcut https://www.example.com/%s 1</td>
+		<td>adds a single word placeholder shortcut</td>
+	</tr>
+	<tr>
+		<td>!mod</td>
+		<td>!mod myshortcut</td>
+		<td>takes you to the edit page for the shortcut</td>
+	</tr>
+	<tr>
+		<td>!del</td>
+		<td>!del myshortcut</td>
+		<td>takes you to delete confirmation page</td>
+	</tr>
+	</table>
+
 	<h3 id="browser">Making GoMarks Your Default Search Engine</h3>
 
 	By making GoMarks your default search engine, you can type your queries in the URL/search bar for faster access to your links.</p>
