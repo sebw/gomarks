@@ -252,6 +252,39 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		</script>
 	</head>
 	<body>
+
+    <!-- Popup element -->
+    <div id="popup"></div>
+
+    <script>
+        // Function to show the popup
+        function showPopup(message, duration) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+
+            // Hide popup after the specified duration
+            setTimeout(function () {
+                popup.style.display = 'none';
+            }, duration);
+        }
+
+        // Check URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const addedShortcut = params.get('added');
+        const modifiedShortcut = params.get('modified');
+        const deletedShortcut = params.get('deleted');
+        if (addedShortcut) {
+            showPopup('New shortcut ' + addedShortcut + ' has been added!', 5000);
+        }
+        if (modifiedShortcut) {
+            showPopup('Shortcut ' + modifiedShortcut + ' has been updated!', 5000);
+        }
+        if (deletedShortcut) {
+            showPopup('Shortcut ' + deletedShortcut + ' has been deleted!', 5000);
+        }
+    </script>
+
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
 		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.1</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
@@ -446,7 +479,7 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?added=" + name, http.StatusSeeOther)
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request) {
@@ -573,7 +606,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Failed to add shortlink. Ensure the keyword is unique.", http.StatusInternalServerError)
 					return
 				} else {
-					http.Redirect(w, r, "/", http.StatusSeeOther)
+					http.Redirect(w, r, "/?added=" + name, http.StatusSeeOther)
 					return
 				}
 			}
@@ -807,7 +840,7 @@ func handleModPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?modified=" + newName, http.StatusSeeOther)
 }
 
 func handleDel(w http.ResponseWriter, r *http.Request) {
@@ -878,7 +911,7 @@ func handleDelPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?deleted=" + name, http.StatusSeeOther)
 }
 
 func handleFallback(w http.ResponseWriter, r *http.Request) {
