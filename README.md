@@ -11,7 +11,7 @@ Create smart shortcuts/bookmarks/aliases and make GoMarks your default search en
  - [Help](#help)
  - [Why](#why)
  - [Docker installation](#install)
- - [Build you own](#build)
+ - [Build your own](#build)
  - [Security Note](#security)
  - [Screenshots](#screenshots)
  - [Contributing](#contributing)
@@ -122,7 +122,7 @@ If you feel something is missing and might benefit everyone, please fork and mak
 
 If the feature is actually useful for myself, I might implement it in the main branch.
 
-<a id="alternatives"</a>
+<a id="alternatives"></a>
 ## Alternatives
 
 - [Prologic's golinks](https://git.mills.io/prologic/golinks): the solution I've used for 3-ish years but the project is no longer actively maintained. James is a pretty cool guy though. Golinks was missing usage statistics and was using a technology stack unknown to me (Bitcask) so I decided to implement my own solution instead of contributing back.
