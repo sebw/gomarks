@@ -295,7 +295,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.1</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.2</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required>
@@ -1160,15 +1160,22 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	<br>
 	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a>
 <br><br><br>
-	GoMarks let's you create shortcuts (similar to <a href="https://meta.wikimedia.org/wiki/Go_links" target="_blank">go links</a>, <a href="https://en.wikipedia.org/wiki/Smart_bookmark" target="_blank">smart bookmarks</a> or <a href="https://en.wikipedia.org/wiki/DuckDuckGo#Bangs" target="_blank"/>bangs</a>) that redirect to websites.</p>
+	GoMarks let's you create shortcuts/bookmarks/aliases that redirect to websites.</p>
 
-	Shortcuts require two things: a keyword and a destination URL.</p>
+	It is a similar concept to <a href="https://meta.wikimedia.org/wiki/Go_links" target="_blank">go links</a>, <a href="https://en.wikipedia.org/wiki/Smart_bookmark" target="_blank">smart bookmarks</a> or <a href="https://en.wikipedia.org/wiki/DuckDuckGo#Bangs" target="_blank"/>bangs</a>.</p>
 
-	To use your shortcuts, you can use the GoMarks webpage, call the URL <code>https://gomarks.example.com/go/?q=your query</code>, or make GoMarks your browser's <a href="/help/#browser">default search engine</a>.</p>
+	<h3 id="usage">Usage</h3>
+
+	Shortcuts are triggered via a keyword. You also need a destination URL.</p>
+    <br>
+	To create and use your shortcuts, you can either:</p>
 	
-	On iPhone, you can create a <a href="/help/#mobile">simple automation</a> that take advantage of GoMarks shortcuts.</p>
+	1. use the search box in the GoMarks webpage</p>
+	2. call the URL <code>https://gomarks.example.com/go/?q=your_keyword</code> directly</p>
+	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> and pass your keywords directly in the browser URL bar.</p>
 	
-	Making GoMarks your default search engine is the fastest way to consume your shortcuts (and impress your colleagues!).</p>
+	On iPhone, you can create an <a href="/help/#mobile">automation</a> and widget.</p>
+
 	<br>
 	<h3 id="simple">Simple shortcuts</h3>
 
@@ -1184,15 +1191,13 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	With this destination URL <code>https://www.bbc.com/news/world/%s</code>, I can now search for <code>bbc europe</code> or <code>bbc australia</code></p>
 
-	Smart shortcuts require an option. You can no longer use <code>bbc</code> alone.
+	Smart shortcuts require an option. You can't use <code>bbc</code> alone because the placeholder expects an option.
 
 	<h3 id="smarter">Smarter shortcuts</h3>
 
-	We can improve <code>bbc</code> further by searching in BBC's articles.</p>
-
-    Let's search the terms "open source":</p>
+	We can improve <code>bbc</code> further by searching in BBC's articles. Let's search the terms "open source" on their website.</p>
 	
-	Actual URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">open+source</span>&edgeauth=eyJhbGciOi...</code> ➡️ Destination URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">%s</span></code></p>
+	The resulting URL URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">open+source</span>&edgeauth=eyJhbGciOi...</code> ➡️ Your destination URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">%s</span></code></p>
 	
 	⚠️ Queries are traditionally passed behind <code>q=</code>, <code>query=</code> or <code>search=</code> arguments but nothing prevents a website owner to use <code>banana=</code>.</p>
 	
@@ -1200,25 +1205,25 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Searching for <code>bbc <span style="background-color:#bf616a;">open source</span></code> would take you to a list of BBC articles about open source.</p>
 
-	Some websites do not pass searches in arguments but rather directly in the URL.</p>
-	
-	See the <code>https://http.cat/<span style="background-color:#bf616a;">%s</span></code> example below.
+	Some websites do not pass searches in arguments but rather directly in the URL. Find some examples below.
 
 	<h4 id="placeholder">Single or Multi Words Placeholder</h4>
 
 	When adding or editing a shortcut, there's a "Force 1️⃣ single word placeholder" option.</p>
 
-	This option works with placeholders, the checkbox is only active if your destination URL contains <code>%s</code>.</p>
+	This option only works with placeholder URLs. The checkbox is only active if your destination URL contains <code>%s</code>.</p>
 
 	This option helps GoMarks choose the best solution between the destination URL or the <a href="/help/#fallback">fallback search engine</a>.</p>
 
 	To illustrate the concept, let's take queries around the Docker topic.</p>
 
-	You want to be able to find Docker images in Docker Hub by using <code>docker mariadb</code> (see destination URL in examples below).</p>
+	You want to be able to find Docker images in Docker Hub by using <code>docker mariadb</code> (destination URL <code>https://hub.docker.com/search?q</span>=<span style="background-color:#bf616a;">%s</span></code>).</p>
 
-	You are also likely to search <code>docker versus openshift</code> or <code>docker compose syntax</code>.</p>
+	You are also likely to search for <code>docker versus openshift</code> or <code>docker compose syntax</code>.</p>
 
-	In the latter scenario, without single word placeholder, you would be taken to Docker Hub with a search for <code>versus openshift</code>. This would provide very odd results.</p>
+	In that scenario, if you don't enable single world placeholder, you're going to ask for "versus openshift" on Docker Hub, which is probably not what you expect.</p>
+
+	Single word placeholders detect when your request contains more than one word and take you to the fallback search engine, instead of throwing an error.</p>
 
 	When single word is enabled, an icon 1️⃣ appears next to the keyword.</p>
 
@@ -1276,41 +1281,36 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Action keywords do not appear in the list.</p>
 
-	You can reconfigure reserved action keywords in the administration section if they conflict with your workflow.</p>
+	You can <a href="/reserved">reconfigure</a> reserved action keywords in the administration section if they conflict with your workflow.</p>
 
 	<table class="reservedkeywords">
 	<tr>
-		<th>Default keyword</th>
-		<th>Example</th>
+		<th>Usage</th>
 		<th>Action</th>
 	</tr>
 	<tr>
-		<td>!add</td>
 		<td>!add myshortcut https://www.example.com</td>
 		<td>adds a simple shortcut</td>
 	</tr>
 	<tr>
-		<td></td>
 		<td>!add myshortcut https://www.example.com/%s</td>
 		<td>adds a placeholder shortcut</td>
 	</tr>
 	<tr>
-		<td></td>
 		<td>!add myshortcut https://www.example.com/%s 1</td>
 		<td>adds a single word placeholder shortcut</td>
 	</tr>
 	<tr>
-		<td>!mod</td>
 		<td>!mod myshortcut</td>
 		<td>takes you to the edit page for the shortcut</td>
 	</tr>
 	<tr>
-		<td>!del</td>
 		<td>!del myshortcut</td>
 		<td>takes you to delete confirmation page</td>
 	</tr>
 	</table>
 
+	<br>
 	<h3 id="browser">Making GoMarks Your Default Search Engine</h3>
 
 	By making GoMarks your default search engine, you can type your queries in the URL/search bar for faster access to your links.</p>
@@ -1366,7 +1366,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 <br>
 	<h2 id="fallback">Fallback Search Engine</h3>
 
-	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single word placeholders</a>, GoMarks can sends your request to the fallback search engine.</p>
+	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single word placeholders</a>, GoMarks can send your request to the fallback search engine.</p>
 
 	The fallback search engine is <a href="/fallback">configurable</a> (Google, Duckduckgo, your own self-hosted solution, etc.)</p>
 	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
