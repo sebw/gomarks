@@ -1168,7 +1168,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Shortcuts are triggered via a keyword. You also need a destination URL.</p>
     <br>
-	To create and use your shortcuts, you can either:</p>
+	To use your shortcuts, you can either:</p>
 	
 	1. use the search box in the GoMarks webpage</p>
 	2. call the URL <code>https://gomarks.example.com/go/?q=your_keyword</code> directly</p>
@@ -1178,7 +1178,6 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<br>
 	<h3 id="simple">Simple shortcuts</h3>
-
 
 	A keyword <code>bbc</code> can take you to the destination URL <code>https://www.bbc.com</code>.</p>
 
@@ -1197,7 +1196,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	We can improve <code>bbc</code> further by searching in BBC's articles. Let's search the terms "open source" on their website.</p>
 	
-	The resulting URL URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">open+source</span>&edgeauth=eyJhbGciOi...</code> ➡️ Your destination URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">%s</span></code></p>
+	The resulting URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">open+source</span>&edgeauth=eyJhbGciOi...</code> ➡️ Your destination URL <code>https://www.bbc.com/search?q=<span style="background-color:#bf616a;">%s</span></code></p>
 	
 	⚠️ Queries are traditionally passed behind <code>q=</code>, <code>query=</code> or <code>search=</code> arguments but nothing prevents a website owner to use <code>banana=</code>.</p>
 	
@@ -1281,7 +1280,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Action keywords do not appear in the list.</p>
 
-	You can <a href="/reserved">reconfigure</a> reserved action keywords in the administration section if they conflict with your workflow.</p>
+	You can <a href="/reserved">reconfigure</a> reserved action keywords in the administration section if they conflict with your workflows.</p>
 
 	<table class="reservedkeywords">
 	<tr>
@@ -1289,23 +1288,23 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 		<th>Action</th>
 	</tr>
 	<tr>
-		<td>!add myshortcut https://www.example.com</td>
+		<td><code>!add myshortcut https://www.example.com</code></td>
 		<td>adds a simple shortcut</td>
 	</tr>
 	<tr>
-		<td>!add myshortcut https://www.example.com/%s</td>
+		<td><code>!add myshortcut https://www.example.com/%s</code></td>
 		<td>adds a placeholder shortcut</td>
 	</tr>
 	<tr>
-		<td>!add myshortcut https://www.example.com/%s 1</td>
+		<td><code>!add myshortcut https://www.example.com/%s 1</code></td>
 		<td>adds a single word placeholder shortcut</td>
 	</tr>
 	<tr>
-		<td>!mod myshortcut</td>
+		<td><code>!mod myshortcut</code></td>
 		<td>takes you to the edit page for the shortcut</td>
 	</tr>
 	<tr>
-		<td>!del myshortcut</td>
+		<td><code>!del myshortcut</code></td>
 		<td>takes you to delete confirmation page</td>
 	</tr>
 	</table>
