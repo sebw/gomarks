@@ -295,7 +295,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.2</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.4</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required>
@@ -1156,7 +1156,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<h2><a href="/">GoMarks Help</a></h2>
 
-	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a> | <a href="/help/#reserved">Reserved keywords</a>
+	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a> | <a href="/help/#reserved">Reserved action keywords</a>
 	<br>
 	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a>
 <br><br><br>
@@ -1312,7 +1312,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	<br>
 	<h3 id="browser">Making GoMarks Your Default Search Engine</h3>
 
-	By making GoMarks your default search engine, you can type your queries in the URL/search bar for faster access to your links.</p>
+	By making GoMarks your default search engine, you can type your queries and actions in the URL/search bar for faster access to your links.</p>
 
 	GoMarks won't leave you hanging if you make a request that doesn't match any keyword, it would just redirect to the <a href="/help/#fallback">fallback search engine</a>.</p>
 
