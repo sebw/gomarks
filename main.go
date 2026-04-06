@@ -298,7 +298,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.5</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
-			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required>
+			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required autofocus>
 			<button type="submit">Search</button>
 		</form></p>
 
