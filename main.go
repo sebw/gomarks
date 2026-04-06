@@ -1326,7 +1326,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Site Search > Add</p>
 
-	Add Site Search and use this URL <code>https://yourGoMarks/go/?q=%s</code></p>
+	Add Site Search and use this URL <code>https://gomarks.example.com/go/?q=%s</code></p>
 
 	<img src="/static/help/chrome_step1.png"></p>
 
