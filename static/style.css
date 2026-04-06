@@ -35,6 +35,14 @@ h1 {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 	border-radius: 4px;
 }
+
+.links td:nth-child(2),
+.links th:nth-child(2) {
+    width: 600px;
+    max-width: 600px;
+    word-break: break-all;
+}
+
 .reservedkeywords {
 	width: 60%;
 	margin: 0 auto;
