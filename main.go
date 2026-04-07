@@ -295,7 +295,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.5</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.6</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required autofocus>
