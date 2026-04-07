@@ -36,8 +36,8 @@ Resets every 20 minutes!
 - setup doesn't require DNS wizardry or local host files tweaking
 - simple shortcuts to redirect to websites (example: <code>bbc</code> takes you to BBC website)
 - smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: <code>amazon rasberry pi 5</code> takes you immediately to Amazon's results for Raspberry)
-- single word placeholder. When enabled `docker alpine` could take you to Docker Hub but `docker version openshift` could take you to your preferred search engine
-- if your query doesn't match any smart link, your query is sent to your preferred search engine
+- single option keywords. When enabled, `docker alpine` would take you to Docker Hub but `docker versus OpenShift` would take you to your preferred search engine
+- if your query doesn't match any shortcut, your query is sent to your preferred search engine
 - shortcuts usage statistics
 - reset statistics per shortcut or all
 - queries history
