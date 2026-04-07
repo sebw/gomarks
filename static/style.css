@@ -91,6 +91,9 @@ a {
 a:hover {
 	text-decoration: none;
 }
+a[href*="%25s"] {
+  color: green;
+}
 form {
 	max-width: 400px;
 	margin: 0 auto 20px;
