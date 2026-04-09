@@ -608,7 +608,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 		if keyword == reserved_add {
 			// add expects a keyword, a URL and potentially single on URLs with placeholder
 			if words_counting <= 2 {
-				http.Error(w, "Adding a link requires some options.\n\nsimple URL:\nadd mykeyword https://example.com/\n\nplaceholder URL:\nadd mykeyword https://example.com/%s\n\nsingle word placeholder URL:\nadd mykeyword https://example.com/%s", http.StatusBadRequest)
+				http.Error(w, "Adding a link requires some options.\n\nsimple URL:\nadd mykeyword https://example.com/\n\nplaceholder URL:\nadd mykeyword https://example.com/%s\n\nsingle option keyword URL:\nadd mykeyword https://example.com/%s", http.StatusBadRequest)
 				return
 			}
 
@@ -630,7 +630,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 						if strings.Contains(url, "%s") && strings.Count(url, "%s") == 1 {
 							singleword = 1
 						} else {
-							http.Error(w, "You requested single word placeholder but your URL doesn't have a placeholder.", http.StatusInternalServerError)
+							http.Error(w, "You requested single option keyword but your URL doesn't have a placeholder.", http.StatusInternalServerError)
 							return
 						}
 					}
@@ -821,7 +821,7 @@ func handleMod(w http.ResponseWriter, r *http.Request) {
 		<form action="/mod-post/{{.Name}}" method="post">
 			<input type="text" name="name" value="{{.Name}}" placeholder="Keyword"required>
 			<input type="url" name="url" id="url" value="{{.URL}}" placeholder="Destination URL" required autocomplete="off">
-			<label for="singleword">Force 1️⃣ single word placeholder</label>
+			<label for="singleword">1️⃣ single option keyword</label>
 			<input type="checkbox" id="singleword" name="singleword" {{if eq .Singleword 1}}checked{{end}} {{.Checkbox}}> (<a href="/help/#placeholder">?</a>)
 			<button type="submit">Save</button></p>
 			<button type="button" onclick="goToIndex()">Cancel</button>
@@ -923,7 +923,7 @@ func handleDel(w http.ResponseWriter, r *http.Request) {
 		<form action="/del-post/{{.Name}}" method="post">
 			<input type="text" name="name" value="{{.Name}}" placeholder="Keyword" disabled>
 			<input type="url" name="url" id="url" value="{{.URL}}" placeholder="Destination URL" required autocomplete="off" disabled>
-			<label for="singleword">Force 1️⃣ single word placeholder</label>
+			<label for="singleword">1️⃣ single option keyword</label>
 			<input type="checkbox" id="singleword" name="singleword" {{if eq .Singleword 1}}checked{{end}} {{.Checkbox}} disabled>
 			<button type="submit">I'm sure!</button></p>
 			<button type="button" onclick="goToIndex()">Cancel</button>
@@ -1262,13 +1262,13 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	GoMarks allows you to create shortcuts for quick searches on websites.</p>
 
-	Let's take The Verge website and search for Macbook Neo.</p>
+	Let's go to The Verge website and look for "Macbook Neo" in their search engine.</p>
 
 	This results in <code>https://www.theverge.com/search?q=Macbook+Neo</code> in your browser bar.</p>
 
 	This would translate to a destination URL <code>https://www.theverge.com/search?q=<span style="background-color:#bf616a;">%s</span></code> to which I assign the keyword <code>verge</code>.</p>
 	
-	Searching for <code>verge <span style="background-color:#bf616a;">Macbook Neo</span></code> will take you to the list of articles about Macbook Neos on The Verge website.</p>
+	Now, searching for <code>verge <span style="background-color:#bf616a;">Macbook Neo</span></code> in GoMarks will take you to the list of articles about Macbook Neos on The Verge website.</p>
 
 	Some websites add a lot of tracking garbage to the URL when searching, like <code>&utm_medium=cpc&utm_campaign=spring_sale</code>.</p>
 	
@@ -1278,7 +1278,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<h4 id="placeholder">Single option keywords</h4>
 
-	A placeholder <code>%s</code> can take multiple words (like the Macbook Neo example above).</p>
+	A placeholder <code>%s</code> can take multiple words (like the "Macbook Neo" example above).</p>
 
 	When adding or editing a shortcut, you'll find a "1️⃣  single option keyword" option.</p>
 
@@ -1371,7 +1371,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	</tr>
 	<tr>
 		<td><code>!add myshortcut https://www.example.com/%s 1</code></td>
-		<td>adds a single word placeholder shortcut</td>
+		<td>adds a single option keyword shortcut</td>
 	</tr>
 	<tr>
 		<td><code>!mod myshortcut</code></td>
@@ -1439,7 +1439,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 <br>
 	<h2 id="fallback">Fallback Search Engine</h3>
 
-	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single word placeholders</a>, GoMarks can send your request to the fallback search engine.</p>
+	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single option keywords</a>, GoMarks can send your request to the fallback search engine.</p>
 
 	The fallback search engine is <a href="/fallback">configurable</a> (Google, Duckduckgo, your own self-hosted solution, etc.)</p>
 	
