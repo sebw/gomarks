@@ -145,7 +145,7 @@ func main() {
 	http.HandleFunc("/reserved/", handleReserved)
 	http.HandleFunc("/reserved-post/", handleReservedPost)
 	http.HandleFunc("/clear/", handleClear)
-	http.HandleFunc("/backup", backupHandler)
+	http.HandleFunc("/backup", handleBackup)
 	http.HandleFunc("/help/", handleHelp)
 
 	// Start the server
@@ -718,14 +718,14 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 		// two or more words are present but there's no placeholder
 		// outcome: failure
 		if keyword_found == 1 && words_counting > 1 && !placeholder_present {
-			http.Error(w, "The keyword " + keyword + " doesn't accept options as its URL " + destination_url + " doesn't have a placeholder.", http.StatusBadRequest)
+			http.Error(w, "Keyword \"" + keyword + "\" doesn't accept options as its URL " + destination_url + " doesn't have a placeholder.", http.StatusBadRequest)
 			return
 		}
 
 		// a single keyword but the URL has a placeholder
 		// Outcome: failure, a second word is expected
 		if keyword_found == 1 && words_counting == 1 && placeholder_present {
-			http.Error(w, "The keyword " + keyword + " expects an option as its URL " + destination_url + "contains a placeholder.", http.StatusBadRequest)
+			http.Error(w, "Keyword \"" + keyword + "\" expects an option as its URL " + destination_url + " contains a placeholder.", http.StatusBadRequest)
 			return
 		}
 
@@ -1172,15 +1172,15 @@ func handleReservedPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?reserved=updated", http.StatusSeeOther)
 }
 
-func backupHandler(w http.ResponseWriter, r *http.Request) {
+func handleBackup(w http.ResponseWriter, r *http.Request) {
 	err := backupFile()
 	if err != nil {
-		fmt.Println("Backup error:", err)
+		log.Println("Backup failed with error:", err)
 		http.Error(w, "Backup failed: "+err.Error(), 500)
 		return
 	}
 
-	fmt.Println("Backup success")
+	log.Println("Database backup success")
 	w.Write([]byte("Backup created successfully"))
 }
 
