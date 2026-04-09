@@ -28,20 +28,21 @@ Resets every 20 minutes!
 <a id="features"></a>
 ## Features
 
-- can run with Docker, Podman or Kubernetes or as a standalone binary
-- can run locally or anywhere (read security section!)
+- can run with Docker, Podman or Kubernetes or as a standalone binary (that you'd need to build)
+- can run locally or publicly (read security section!)
 - single page web interface
 - gomarks can be used as your default search engine in Firefox, Chrome or to some extent iPhone (see screenshots)
 - action keywords `!add`, `!mod`, `!del` allow you to manipulate your shortcuts from your browser URL bar
 - setup doesn't require DNS wizardry or local host files tweaking
 - simple shortcuts to redirect to websites (example: <code>bbc</code> takes you to BBC website)
 - smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: <code>amazon rasberry pi 5</code> takes you immediately to Amazon's results for Raspberry)
-- single option keywords. When enabled, `docker alpine` would take you to Docker Hub but `docker versus OpenShift` would take you to your preferred search engine
 - if your query doesn't match any shortcut, your query is sent to your preferred search engine
+- single option keywords. When enabled, `docker alpine` would take you to Docker Hub but `docker versus OpenShift` would take you to your preferred search engine
 - shortcuts usage statistics
 - reset statistics per shortcut or all
 - queries history
 - delete history
+- database backup
 - all data stored in sqlite database, allowing easy import, manipulation and backup
 
 <a id="help"></a>
