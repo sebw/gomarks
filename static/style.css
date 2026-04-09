@@ -91,6 +91,9 @@ a {
 a:hover {
 	text-decoration: none;
 }
+a[href*="%25s"] {
+  color: green;
+}
 form {
 	max-width: 400px;
 	margin: 0 auto 20px;
@@ -108,7 +111,7 @@ input[type="text"], input[type="url"] {
 	font-family: Arial, sans-serif;
 }
 button {
-	width: 95%;
+	width: 200px;
 	padding: 10px;
 	background-color: #5e81ac;
 	color: white;

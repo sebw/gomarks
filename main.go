@@ -4,6 +4,10 @@ import (
 	"database/sql"
 	"html/template"
 	"log"
+	"io"
+	"os"
+	"time"
+	"fmt"
 	"net/http"
 	"strings"
 	"path/filepath"
@@ -48,9 +52,11 @@ func main() {
 		log.Println("Importing some examples")
 		// Insert some default settings
 		insertDataQuery := `
-		INSERT INTO items (name, url, singleword, count) VALUES ('b', 'https://www.bbc.com', 0, 0);
-		INSERT INTO items (name, url, singleword, count) VALUES ('bb', 'https://www.bbc.com/news/world/%s', 0, 0);
-		INSERT INTO items (name, url, singleword, count) VALUES ('bbc', 'https://www.bbc.com/search?q=%s', 0, 0);
+		INSERT INTO items (name, url, singleword, count) VALUES ('amzn', 'https://www.amazon.com/s?k=%s', 0, 12);
+		INSERT INTO items (name, url, singleword, count) VALUES ('b', 'https://www.bbc.com', 0, 7);
+		INSERT INTO items (name, url, singleword, count) VALUES ('bbc', 'https://www.bbc.com/news/world/%s', 1, 3);
+		INSERT INTO items (name, url, singleword, count) VALUES ('docker', 'https://hub.docker.com/search?q=%s', 1, 33);
+		INSERT INTO items (name, url, singleword, count) VALUES ('verge', 'https://www.theverge.com/search?q=%s', 0, 69);
 		`
 		_, err = db.Exec(insertDataQuery)
 		if err != nil {
@@ -124,6 +130,7 @@ func main() {
 	http.HandleFunc("/reserved/", handleReserved)
 	http.HandleFunc("/reserved-post/", handleReservedPost)
 	http.HandleFunc("/clear/", handleClear)
+	http.HandleFunc("/backup", backupHandler)
 	http.HandleFunc("/help/", handleHelp)
 
 	// Start the server
@@ -295,7 +302,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.5</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.6</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required autofocus>
@@ -395,7 +402,16 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<p><a href="/fallback">Configure fallback search engine</a></p>
 
+		<button onclick="backup()">Backup database</button>
 
+		<script>
+		function backup() {
+			fetch('/backup', { method: 'POST' })
+				.then(res => res.text())
+				.then(alert)
+				.catch(err => alert("Error: " + err));
+		}
+		</script>
 
 	</body>
 	</html>
@@ -1139,6 +1155,39 @@ func handleReservedPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/?reserved=updated", http.StatusSeeOther)
+}
+
+func backupHandler(w http.ResponseWriter, r *http.Request) {
+	err := backupFile()
+	if err != nil {
+		fmt.Println("Backup error:", err)
+		http.Error(w, "Backup failed: "+err.Error(), 500)
+		return
+	}
+
+	fmt.Println("Backup success")
+	w.Write([]byte("Backup created successfully"))
+}
+
+func backupFile() error {
+	srcFile := "/data/items.db"
+	timestamp := time.Now().Format("20060102_150405")
+	destFile := fmt.Sprintf("/data/items.db.%s", timestamp)
+
+	src, err := os.Open(srcFile)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(destFile)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	return err
 }
 
 func handleHelp(w http.ResponseWriter, r *http.Request) {
