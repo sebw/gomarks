@@ -1227,70 +1227,78 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	GoMarks let's you create shortcuts that provides quick access to your favorite websites.</p>
 
 	It is a similar concept to <a href="https://meta.wikimedia.org/wiki/Go_links" target="_blank">go links</a>, <a href="https://en.wikipedia.org/wiki/Smart_bookmark" target="_blank">smart bookmarks</a> or <a href="https://en.wikipedia.org/wiki/DuckDuckGo#Bangs" target="_blank"/>bangs</a>.</p>
-
-	<h3 id="usage">Usage</h3>
+    </br>
+	<h3 id="basics">Basic concept</h3>
 
 	Shortcuts need a keyword and a destination URL.</p>
+	When your request in GoMarks matches one of your keywords, it redirects (HTTP 302) to the destination URL.</p>
     <br>
+
+	<h3 id="usage">Usage</h3>
 	To use your shortcuts, you can:</p>
 	
-	1. use the search box in the GoMarks webpage</p>
-	2. call the URL <code>{{.BaseURL}}/go/?q=your_keyword</code> directly</p>
-	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> and pass your keywords directly in the browser URL bar.</p>
+	1. set GoMarks as your browser start page and use its search box</p>
+	2. open the URL <code>{{.BaseURL}}/go/?q=keyword+option</code> directly</p>
+	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> so you can type your keywords (and potential options) directly in the browser URL bar.</p>
 	
-	On iPhone, you can create an <a href="/help/#mobile">automation</a> and widget.</p>
 
 	<br>
 	<h3 id="simple">Simple shortcuts</h3>
 
 	A keyword <code>bbc</code> can take you to the destination URL <code>https://www.bbc.com</code>.</p>
 
-	Simple shortcuts can't take options (like <code>bbc europe</code>) because they are simple, not smart.
+	Simple shortcuts can't take options (like <code>bbc europe</code>) because they are simple redirects.
 	
 	<br>
 	<h3 id="smart">Smart shortcuts</h3>
 
-	Smart shortcuts can take options (like <code>bbc europe</code> or <code>bbc asia</code>) and will redirect accordingly by using a placeholder <code>%s</code> in destination URLs.</p>
+	Smart shortcuts can take options (like <code>bbc europe</code> or <code>bbc asia</code>) and will redirect based on the placeholder <code>%s</code> in your destination URLs.</p>
 
-	This is a good example: <code>https://www.bbc.com/news/world/%s</code>.
+	For the above BBC example, this would be your URL <code>https://www.bbc.com/news/world/<span style="background-color:#bf616a;">%s</span></code>.</p>
 
-	Smart shortcuts require an option. If you use <code>bbc</code> alone, you'll get an error if the URL has a placeholder.</p>
+	Smart shortcuts require an option. If you do not pass an option, you'll get an error because the placeholder expects one.</p>
 
 	<h3 id="smarter">Search shortcuts</h3>
 
 	GoMarks allows you to create shortcuts for quick searches on websites.</p>
 
-	Let's take The Verge website (I'll use the <code>verge</code> shortcut for this example) and search for Macbook.</p>
+	Let's take The Verge website and search for Macbook Neo.</p>
 
-	This results in <code>https://www.theverge.com/search?q=macbook</code> in your browser bar.</p>
+	This results in <code>https://www.theverge.com/search?q=Macbook+Neo</code> in your browser bar.</p>
 
-	This would translate to a destination URL <code>https://www.theverge.com/search?q=<span style="background-color:#bf616a;">%s</span></code></p>
+	This would translate to a destination URL <code>https://www.theverge.com/search?q=<span style="background-color:#bf616a;">%s</span></code> to which I assign the keyword <code>verge</code>.</p>
 	
-	Some websites add a lot garbage to the URL when searching, like <code>&edgeauth=eyJhbGciOi</code>. Usually you can safely remove those and only keep the query argument in your URL.</p>
+	Searching for <code>verge <span style="background-color:#bf616a;">Macbook Neo</span></code> will take you to the list of articles about Macbook Neos on The Verge website.</p>
 
-	Now searching for <code>verge <span style="background-color:#bf616a;">macbook</span></code> will take you to the list of articles about Macbooks on The Verge website.</p>
+	Some websites add a lot of tracking garbage to the URL when searching, like <code>&utm_medium=cpc&utm_campaign=spring_sale</code>.</p>
+	
+	Usually you can safely remove those and only keep the query argument in your destination URL.</p>
 
-	Find more examples below.
+	You can find more examples below.
 
 	<h4 id="placeholder">Single option keywords</h4>
 
-	When adding or editing a shortcut, there's a "1️⃣  single option keyword" option.</p>
+	A placeholder <code>%s</code> can take multiple words (like the Macbook Neo example above).</p>
 
-	This option is only active when the the URLs contains a placeholder.</p>
+	When adding or editing a shortcut, you'll find a "1️⃣  single option keyword" option.</p>
 
-	This option helps GoMarks choose the best solution between your destination URL or the <a href="/help/#fallback">fallback search engine</a>.</p>
+	This option only activates for URLs with a placeholder.</p>
 
-	To illustrate the concept, let's take example queries around the Docker topic.</p>
+	With this option enabled, it means the shortcut is expected to take a single option/word (e.g. Macbook).</p>
+	
+	If you pass multiple options/words, GoMarks will bypass your keyword and make a <a href="/help/#fallback">search engine</a> query instead.</p>
 
-	You want a shorcut to quickly search for Docker images on Docker Hub by using <code>docker mariadb</code> (destination URL <code>https://hub.docker.com/search?q</span>=<span style="background-color:#bf616a;">%s</span></code>).</p>
+	Let me illustrate the concept with some queries around the Docker topic.</p>
 
-	But you are also likely to search for <code>docker versus OpenShift</code> or <code>docker compose syntax</code>.</p>
+	You want a shorcut to search for images on Docker Hub by using <code>docker mariadb</code> (destination URL <code>https://hub.docker.com/search?q</span>=<span style="background-color:#bf616a;">%s</span></code>).</p>
 
-	In that scenario, if you don't enable single open keyword, you're going to redirect to a search for "versus OpenShift" on Docker Hub, while you probably just want to do a search engine search.</p>
+	Sometimes, you are also likely to search for <code>docker versus OpenShift</code> or <code>docker compose syntax</code>.</p>
 
-	Single option keywords detect when your request contains more than one word and take you to the fallback search engine, instead of throwing an error.</p>
+	If you DO NOT enable single option keyword, you're going to end up searching Docker Hub for "versus OpenShift" which is probably not what you wanted.</p>
 
-	When single option is enabled, an icon 1️⃣ appears next to the keyword.</p>
+	With the option enabled, <code>docker versus OpenShift</code> will make a search engine request and <code>docker mariadb</code> will make a Docker Hub search.</p>
+
+	When single option is enabled, an icon 1️⃣ appears next to the keyword in the shortcuts list.</p>
 
 	<h4>Shortcut examples</h4>
 
