@@ -4,6 +4,10 @@ import (
 	"database/sql"
 	"html/template"
 	"log"
+	"io"
+	"os"
+	"time"
+	"fmt"
 	"net/http"
 	"strings"
 	"path/filepath"
@@ -126,6 +130,7 @@ func main() {
 	http.HandleFunc("/reserved/", handleReserved)
 	http.HandleFunc("/reserved-post/", handleReservedPost)
 	http.HandleFunc("/clear/", handleClear)
+	http.HandleFunc("/backup", backupHandler)
 	http.HandleFunc("/help/", handleHelp)
 
 	// Start the server
@@ -397,7 +402,16 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<p><a href="/fallback">Configure fallback search engine</a></p>
 
+		<button onclick="backup()">Backup database</button>
 
+		<script>
+		function backup() {
+			fetch('/backup', { method: 'POST' })
+				.then(res => res.text())
+				.then(alert)
+				.catch(err => alert("Error: " + err));
+		}
+		</script>
 
 	</body>
 	</html>
@@ -1141,6 +1155,39 @@ func handleReservedPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/?reserved=updated", http.StatusSeeOther)
+}
+
+func backupHandler(w http.ResponseWriter, r *http.Request) {
+	err := backupFile()
+	if err != nil {
+		fmt.Println("Backup error:", err)
+		http.Error(w, "Backup failed: "+err.Error(), 500)
+		return
+	}
+
+	fmt.Println("Backup success")
+	w.Write([]byte("Backup created successfully"))
+}
+
+func backupFile() error {
+	srcFile := "/data/items.db"
+	timestamp := time.Now().Format("20060102_150405")
+	destFile := fmt.Sprintf("/data/items.db.%s", timestamp)
+
+	src, err := os.Open(srcFile)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(destFile)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	return err
 }
 
 func handleHelp(w http.ResponseWriter, r *http.Request) {
