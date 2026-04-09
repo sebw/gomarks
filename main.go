@@ -17,6 +17,21 @@ import (
 
 var db *sql.DB
 
+func getBaseURL(r *http.Request) string {
+	scheme := "http"
+
+	if r.TLS != nil {
+		scheme = "https"
+	}
+
+	// Support reverse proxies (important!)
+	if proto := r.Header.Get("X-Forwarded-Proto"); proto != "" {
+		scheme = proto
+	}
+
+	return scheme + "://" + r.Host
+}
+
 func main() {
 	// Initialize the database
 	var err error
@@ -1207,7 +1222,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a> | <a href="/help/#reserved">Reserved action keywords</a>
 	<br>
-	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a>
+	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a> | <a href="/help/#backup">Backup database</a>
 <br><br><br>
 	GoMarks let's you create shortcuts that provides quick access to your favorite websites.</p>
 
@@ -1220,7 +1235,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	To use your shortcuts, you can:</p>
 	
 	1. use the search box in the GoMarks webpage</p>
-	2. call the URL <code>https://gomarks.example.com/go/?q=your_keyword</code> directly</p>
+	2. call the URL <code>{{.BaseURL}}/go/?q=your_keyword</code> directly</p>
 	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> and pass your keywords directly in the browser URL bar.</p>
 	
 	On iPhone, you can create an <a href="/help/#mobile">automation</a> and widget.</p>
@@ -1375,7 +1390,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Site Search > Add</p>
 
-	Add Site Search and use this URL <code>https://gomarks.example.com/go/?q=%s</code></p>
+	Add Site Search and use this URL <code>{{.BaseURL}}/go/?q=%s</code></p>
 
 	<img src="/static/help/chrome_step1.png"></p>
 
@@ -1419,6 +1434,17 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single word placeholders</a>, GoMarks can send your request to the fallback search engine.</p>
 
 	The fallback search engine is <a href="/fallback">configurable</a> (Google, Duckduckgo, your own self-hosted solution, etc.)</p>
+	
+	<h2 id="backup">Backup database</h3>
+
+	<p>You can trigger a backup via the button on the main page or via:</p>
+
+	<code>curl -X POST {{.BaseURL}}/backup</code></br>
+	</br>
+	The database will be saved on the filesystem in the format <code>items.db.timestamp</code>.</br>
+	</br>
+	You can restore the database by manually replacing <code>items.db</code> with the backup copy.
+	
 	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 	🍌🐇<br><br>
 	</body>
@@ -1426,7 +1452,13 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	`))
 
 	// Render the template
-	err := tmpl.Execute(w, nil)
+	baseURL := getBaseURL(r)
+
+	err := tmpl.Execute(w, struct {
+		BaseURL string
+	}{
+		BaseURL: baseURL,
+	})
 	if err != nil {
 		http.Error(w, "Failed to render template", http.StatusInternalServerError)
 	}
