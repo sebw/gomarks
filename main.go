@@ -48,9 +48,11 @@ func main() {
 		log.Println("Importing some examples")
 		// Insert some default settings
 		insertDataQuery := `
-		INSERT INTO items (name, url, singleword, count) VALUES ('b', 'https://www.bbc.com', 0, 0);
-		INSERT INTO items (name, url, singleword, count) VALUES ('bb', 'https://www.bbc.com/news/world/%s', 0, 0);
-		INSERT INTO items (name, url, singleword, count) VALUES ('bbc', 'https://www.bbc.com/search?q=%s', 0, 0);
+		INSERT INTO items (name, url, singleword, count) VALUES ('amzn', 'https://www.amazon.com/s?k=%s', 0, 12);
+		INSERT INTO items (name, url, singleword, count) VALUES ('b', 'https://www.bbc.com', 0, 7);
+		INSERT INTO items (name, url, singleword, count) VALUES ('bbc', 'https://www.bbc.com/news/world/%s', 1, 3);
+		INSERT INTO items (name, url, singleword, count) VALUES ('docker', 'https://hub.docker.com/search?q=%s', 1, 33);
+		INSERT INTO items (name, url, singleword, count) VALUES ('verge', 'https://www.theverge.com/search?q=%s', 0, 69);
 		`
 		_, err = db.Exec(insertDataQuery)
 		if err != nil {
