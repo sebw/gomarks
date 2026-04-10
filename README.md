@@ -63,18 +63,9 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
 
-Use `ghcr.io/sebw/gomarks:latest-arm` on ARM based machines.
-
 Your GoMarks instance runs at `http://localhost:8080`.
 
 Go to the help section for instructions.
-
-<a id="build"></a>
-## Build Your Own Image
-
-```bash
-docker build -f Dockerfile -t gomarks:0.1
-```
 
 <a id="security"></a>
 ## Security
@@ -83,9 +74,16 @@ There's no authentication, users management or certificates.
 
 An internet exposed gomarks can be used maliciously.
 
-You MUST secure GoMarks behind things like Let's Encrypt, Authentik, Authelia or Cloudflare.
+You MUST secure GoMarks behind things like Let's Encrypt, Authentik, Authelia, PocketID or Cloudflare.
 
-You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zero-trust-authentik/) to secure GoMarks (SSO + HTTPS) behind Cloudflare and Authentik.
+You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zero-trust-authentik/) to secure GoMarks (SSO + HTTPS) behind Cloudflare and Authentik or [this guide](https://blog.wains.be/2026/2026-03-02-cloudflare-zero-trust-pocketid/) for Cloudflare and PocketID.
+
+<a id="build"></a>
+## Build Your Own Image
+
+```bash
+docker build -f Dockerfile -t gomarks:0.1
+```
 
 <a id="screenshots"></a>
 ## Screenshots
