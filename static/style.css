@@ -165,3 +165,31 @@ code {
 .last-queries li {
 	margin-bottom: 8px;
 }
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table.links {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  .links th:nth-child(2),
+  .links td:nth-child(2) {
+    display: none;
+  }
+}
+
+.links td a {
+  margin: 0 6px;
+  font-size: 18px;
+  display: inline-block;
+  padding: 4px;
+}
+
+.actions a:hover {
+  transform: scale(1.5);
+}

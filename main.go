@@ -317,7 +317,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v0.1.6</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260410</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 		<p><form action="/go/" method="get" target="_blank">
 			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required autofocus>
@@ -348,26 +348,33 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<p><a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code></p>
 
+		<div class="table-wrapper">
 		<table class="links">
 			<tr>
 				<th data-sort="keyword" data-type="string" onclick="sortTable(0)">Keyword ↕️</th>
 				<th style="width: 200px;" data-sort="url" data-type="string" onclick="sortTable(1)">Destination URL ↕️</th>
-				<th style="text-align: center;" data-sort="visits" data-type="numeric" onclick="sortTable(2)">Visits count ↕️</th>
-				<th style="text-align: center;">Reset visits count</th>
-				<th style="text-align: center;">Edit</th>
-				<th style="text-align: center;">Delete</th>
+				<th style="text-align: center;" data-sort="visits" data-type="numeric" onclick="sortTable(2)">Visits ↕️</th>
+				<th style="text-align: center;">Management</th>
 			</tr>
 			{{range .Items}}
 			<tr>
-				<td><code id="keyword"><a href="/go/?q={{.Name}}" target="_blank">{{.Name}}</code> {{if eq .Singleword 1}} 1️⃣{{end}}</a></td>
+				<td>
+				<code id="keyword">
+					<a href="/go/?q={{.Name}}" target="_blank">
+					{{.Name}}
+					</a>
+				</code>
+				{{if eq .Singleword 1}} 1️⃣{{end}}
+				</td>
 				<td><a href="{{.URL}}" target="_blank">{{.URL}}</a></td>
 				<td style="text-align: center;">{{.Count}}</td>
-				<td style="text-align: center;"><a href="/reset/{{.Name}}">♻️</a></td>
-				<td style="text-align: center;"><a href="/mod/{{.Name}}">✍🏻</a></td>
-				<td style="text-align: center;"><a href="/del/{{.Name}}">❌</a></td>
+				<td style="text-align: center;"><a title="Reset visit count" href="/reset/{{.Name}}">♻️</a> 
+				<a title="Edit shortcut" href="/mod/{{.Name}}">✍🏻</a> 
+				<a title="Delete shortcut" href="/del/{{.Name}}">❌</a></td>
 			</tr>
 			{{end}}
 		</table>
+		</div>
 
 		<h2>Last 30 queries</h2>
 
