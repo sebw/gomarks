@@ -1229,12 +1229,19 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<a href="/help/#simple">Simple shortcuts</a> | <a href="/help/#smart">Smart shortcuts</a> | <a href="/help/#smarter">Smarter shortcuts</a> | <a href="/help/#reserved">Reserved action keywords</a>
 	<br>
-	<a href="/help/#browser">GoMarks as your search engine</a> | <a href="/help/#mobile">GoMarks for iPhone</a> | <a href="/help/#fallback">Fallback search engine</a> | <a href="/help/#backup">Backup database</a>
+	<a href="/help/#browser">GoMarks as your search engine (Firefox/Chrome/Safari/iPhone)</a> | <a href="/help/#fallback">Fallback search engine</a> | <a href="/help/#backup">Backup database</a>
 <br><br><br>
+
+	The general idea of GoMarks is to become your default search engine.</p>
+
 	GoMarks let's you create shortcuts that provides quick access to your favorite websites.</p>
 
 	It is a similar concept to <a href="https://meta.wikimedia.org/wiki/Go_links" target="_blank">go links</a>, <a href="https://en.wikipedia.org/wiki/Smart_bookmark" target="_blank">smart bookmarks</a> or <a href="https://en.wikipedia.org/wiki/DuckDuckGo#Bangs" target="_blank"/>bangs</a>.</p>
-    </br>
+    </p>
+
+	If your request doesn't match any of your shortcuts, GoMarks makes regular search engine requests.</p>
+	
+	</br>
 	<h3 id="basics">Basic concept</h3>
 
 	Shortcuts need a keyword and a destination URL.</p>
@@ -1246,7 +1253,7 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	
 	1. set GoMarks as your browser start page and use its search box</p>
 	2. open the URL <code>{{.BaseURL}}/go/?q=keyword+option</code> directly</p>
-	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> so you can type your keywords (and potential options) directly in the browser URL bar.</p>
+	3. RECOMMENDED: make GoMarks your browser's <a href="/help/#browser">default search engine</a> so you can type your keywords (and potential options) directly in your browser URL bar.</p>
 	
 
 	<br>
@@ -1254,16 +1261,18 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	A keyword <code>bbc</code> can take you to the destination URL <code>https://www.bbc.com</code>.</p>
 
-	Simple shortcuts can't take options (like <code>bbc europe</code>) because they are simple redirects.
+	Simple shortcuts can't take options (for example <code>bbc europe</code>) because they act like traditional bookmarks.
 	
 	<br>
 	<h3 id="smart">Smart shortcuts</h3>
 
-	Smart shortcuts can take options (like <code>bbc europe</code> or <code>bbc asia</code>) and will redirect based on the placeholder <code>%s</code> in your destination URLs.</p>
+	Smart shortcuts can take options (like <code>bbc europe</code> or <code>bbc asia</code>) and will redirect based on a mandatory placeholder <code>%s</code> in the destination URL.</p>
 
 	For the above BBC example, this would be your URL <code>https://www.bbc.com/news/world/<span style="background-color:#bf616a;">%s</span></code>.</p>
 
-	Smart shortcuts require an option. If you do not pass an option, you'll get an error because the placeholder expects one.</p>
+	A request <code>bbc europe</code> would take you to <code>https://www.bbc.com/news/world/europe</code>.</p>
+
+	Smart shortcuts will throw an error if you do not pass an option because the placeholder expects one.</p>
 
 	<h3 id="smarter">Search shortcuts</h3>
 
@@ -1281,29 +1290,29 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	
 	Usually you can safely remove those and only keep the query argument in your destination URL.</p>
 
-	You can find more examples below.
+	You can find more shortcut examples below.
 
 	<h4 id="placeholder">Single option keywords</h4>
 
 	A placeholder <code>%s</code> can take multiple words (like the "Macbook Neo" example above).</p>
 
-	When adding or editing a shortcut, you'll find a "1️⃣  single option keyword" option.</p>
+	When adding or editing a shortcut, you'll see a "1️⃣  single option keyword" option.</p>
 
 	This option only activates for URLs with a placeholder.</p>
 
-	With this option enabled, it means the shortcut is expected to take a single option/word (e.g. Macbook).</p>
+	If you enable the option, it means your shortcut is expected to take a single option (e.g. <code>verge Macbook</code> but not <code>verge Macbook Neo</code>).</p>
 	
 	If you pass multiple options/words, GoMarks will bypass your keyword and make a <a href="/help/#fallback">search engine</a> query instead.</p>
 
-	Let me illustrate the concept with some queries around the Docker topic.</p>
+	Let me illustrate the concept with queries around the Docker topic.</p>
 
-	You want a shorcut to search for images on Docker Hub by using <code>docker mariadb</code> (destination URL <code>https://hub.docker.com/search?q</span>=<span style="background-color:#bf616a;">%s</span></code>).</p>
+	You want a shortcut to search for images on Docker Hub by using <code>docker mariadb</code> (destination URL <code>https://hub.docker.com/search?q</span>=<span style="background-color:#bf616a;">%s</span></code>).</p>
 
-	Sometimes, you are also likely to search for <code>docker versus OpenShift</code> or <code>docker compose syntax</code>.</p>
+	Sometimes, you are also likely to search for <code>docker compose syntax</code>.</p>
 
-	If you DO NOT enable single option keyword, you're going to end up searching Docker Hub for "versus OpenShift" which is probably not what you wanted.</p>
+	If you DO NOT enable single option keyword, you would end up searching Docker Hub for "compose syntax" which is probably not what you wanted.</p>
 
-	With the option enabled, <code>docker versus OpenShift</code> will make a search engine request and <code>docker mariadb</code> will make a Docker Hub search.</p>
+	With the option enabled, <code>docker compose syntax</code> will make a search engine request and <code>docker mariadb</code> will make a Docker Hub search.</p>
 
 	When single option is enabled, an icon 1️⃣ appears next to the keyword in the shortcuts list.</p>
 
@@ -1393,9 +1402,11 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	<br>
 	<h3 id="browser">Making GoMarks Your Default Search Engine</h3>
 
-	By making GoMarks your default search engine, you can type your queries and actions in the URL/search bar for faster access to your links.</p>
+	By making GoMarks your default search engine, you can type your queries and actions in your web browser URL/search bar for even faster access to your links.</p>
 
-	If your request doesn't match any shortcuts, GoMarks will just redirect to the <a href="/help/#fallback">fallback search engine</a>.</p>
+	By doing so, you never really have to open GoMarks web page.</p>
+
+	If your request doesn't match any shortcuts, GoMarks will just make a <a href="/help/#fallback">search engine</a> request.</p>
 
 	<h4>Chrome</h4>
 
@@ -1419,34 +1430,28 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	<h4>Firefox</h4>
 
-	Go to your GoMarks instance > Right click on the URL > Add "GoMarks"</p>
+	Go to settings > Search > Search shortcuts</p>
 
-	<img src="/static/help/firefox_step1.png"></p>
+	Click Add</p>
 
-	Go in Firefox settings > Change Default Search Engine</p>
+	Give the search engine a name and use this URL <code>{{.BaseURL}}/go/?q=%s</code></p>
 
-	<img src="/static/help/firefox_step2.png"></p>
-
-	Start searching</p>
-
-	<img src="/static/help/firefox_step3.png"></p>
-
-	<h3>Firefox - Alternative Way</h3>
-
-	If the method above doesn't work, use <a href="https://addons.mozilla.org/en-GB/firefox/addon/add-custom-search-engine/">this add-on</a>.</p>
+	You can also use <a href="https://addons.mozilla.org/en-GB/firefox/addon/add-custom-search-engine/">this add-on</a>.</p>
 <br>
-	<h3 id="mobile">iPhone Shortcuts</h3>
+	<h4>Safari (iPhone / MacOS)</h3>
 
-	You can't change the default search engine in Safari on iPhone.</p>
+	By default, you can't change the default search engine in Safari.</p>
 
-	You can use an iOS shortcut and use the action button or widgets to call GoMarks.</p>
+	I personally use "Customize Search Engine (CSE)" [<a href="https://apps.apple.com/us/app/customize-search-engine/id6445840140">link</a>] to work around the limitation.</p>
+
+	On iPhone, you can also use an iOS shortcut and use the action button or widgets to call GoMarks.</p>
 
 	<img height="600" src="/static/help/iphone_step1.jpg">
 	<img height="600" src="/static/help/iphone_step2.jpg"></p>
-<br>
+
 	<h2 id="fallback">Fallback Search Engine</h3>
 
-	If your request doesn't match any shortcut or if you use <a href="/help/#placeholder">single option keywords</a>, GoMarks can send your request to the fallback search engine.</p>
+	If your request doesn't match any of your shortcut, GoMarks will send your request to the fallback search engine.</p>
 
 	The fallback search engine is <a href="/fallback">configurable</a> (Google, Duckduckgo, your own self-hosted solution, etc.)</p>
 	
