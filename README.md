@@ -31,7 +31,7 @@ Resets every 20 minutes!
 - simple shortcuts to redirect to websites (example: <code>bbc</code> takes you to BBC website)
 - smart shortcuts using placeholder <code>%s</code> to redirect to websites with search engines (example: <code>amazon rasberry pi 5</code> takes you immediately to Amazon's results for Raspberry)
 - if your query doesn't match any shortcut, your query is sent to your preferred search engine
-- single option keywords. When enabled, `docker alpine` would take you to Docker Hub but `docker versus OpenShift` would take you to your preferred search engine
+- single option keywords. When enabled, `docker alpine` would take you to Docker Hub but `docker compose syntax` would take you to your preferred search engine
 - can run with Docker, Podman or Kubernetes or as a standalone binary (that you'd need to build)
 - can run locally or publicly (read security section!)
 - single page web interface
