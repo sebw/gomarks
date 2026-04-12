@@ -317,7 +317,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260410</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260412</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 </br>
 </br>
