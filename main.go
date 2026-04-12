@@ -521,6 +521,23 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// keywords can't contain some special characters
+	prohibitedChars := []string{"<", ">", " ", "\"", "'", ";", "|", "&", "\\", "*", "?", "@", "#", "$", "%", "^"}
+
+	hasProhibitedChar := func(input string) bool {
+		for _, char := range prohibitedChars {
+			if strings.Contains(input, char) {
+				return true
+			}
+		}
+		return false
+	}
+
+	if hasProhibitedChar(name) {
+		http.Error(w, "Keyword contains invalid character(s).", http.StatusBadRequest)
+		return
+	}
+
 	// Block shortcut creation using reserved keywords
 	var reserved_add string
 	err := db.QueryRow("SELECT value FROM settings WHERE setting = 'keyword_add'").Scan(&reserved_add)
@@ -564,7 +581,7 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	} 
 
-	_, err = db.Exec("INSERT INTO items (name, url, singleword) VALUES (?, ?, ?)", name, url, singleword)
+	_, err = db.Exec("INSERT INTO items (name, url, singleword) VALUES (LOWER(?), ?, ?)", name, url, singleword)
 	if err != nil {
 		http.Error(w, "Failed to add shortlink. Ensure the keyword is unique.", http.StatusInternalServerError)
 		return
