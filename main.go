@@ -317,22 +317,67 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		<a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260410</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260410</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
-		<p><form action="/go/" method="get" target="_blank">
-			<input type="text" name="q" placeholder="Search here or make GoMarks your default search engine " required autofocus>
-			<button type="submit">Search</button>
-		</form></p>
+</br>
+</br>
+</br>
 
-		<h2>You have {{.Countlinks}} shortcuts</h2>
 
-		<p><form action="/add" method="post">
-			<input type="text" name="name" placeholder="Keyword" required>
-			<input type="url" name="url" id="url" placeholder="Destination URL" size="100" required autocomplete="off">
-			<label for="singleword">1️⃣  single option keyword</label>
-			<input type="checkbox" id="singleword" name="singleword" disabled> (<a href="/help/#placeholder">?</a>)
-			<button type="submit">Add new shortcut</button>
-		</form></p>
+<style>
+  .forms-container {
+    display: flex;
+    gap: 10px; /* Reduced from 20px to 10px */
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 900px; /* Limits total width on large screens */
+    margin: 0 auto; /* Centers the container */
+  }
+
+  .forms-container form {
+    flex: 1;
+    min-width: 280px; /* Slightly smaller minimum width */
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .forms-container input[type="text"],
+  .forms-container input[type="url"] {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  
+  .forms-container label {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
+</style>
+
+<div class="forms-container">
+  <!-- Search Form -->
+  <form action="/go/" method="get" target="_blank">
+    <input type="text" name="q" placeholder="Search here or make GoMarks your default search engine" required autofocus>
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Add Shortcut Form -->
+  <form action="/add" method="post">
+    <input type="text" name="name" placeholder="New keyword" required>
+    <input type="url" name="url" id="url" placeholder="New destination URL (use %s as placeholder)" required autocomplete="off">
+    
+    <div style="margin: 10px 0;">
+      <input type="checkbox" id="singleword" name="singleword" disabled> 
+      <label for="singleword">1️⃣ single option keyword</label>
+      <a href="/help/#placeholder">?</a>
+    </div>
+    
+    <button type="submit">Add new shortcut</button>
+  </form>
+</div>
 		<script>
 		// enable checkbox if placeholder in URL
 		const textField = document.getElementById('url');
@@ -346,15 +391,15 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		});
 		</script>
 
-		<p><a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code></p>
+		
 
 		<div class="table-wrapper">
 		<table class="links">
 			<tr>
-				<th data-sort="keyword" data-type="string" onclick="sortTable(0)">Keyword ↕️</th>
+				<th style="text-align: left; width: 150px" data-sort="keyword" data-type="string" onclick="sortTable(0)">Keyword ↕️</th>
 				<th style="width: 200px;" data-sort="url" data-type="string" onclick="sortTable(1)">Destination URL ↕️</th>
-				<th style="text-align: center;" data-sort="visits" data-type="numeric" onclick="sortTable(2)">Visits ↕️</th>
-				<th style="text-align: center;">Management</th>
+				<th style="text-align: center; width: 100px" data-sort="visits" data-type="numeric" onclick="sortTable(2)">Visits ↕️</th>
+				<th style="text-align: center; width: 150px">Management</th>
 			</tr>
 			{{range .Items}}
 			<tr>
