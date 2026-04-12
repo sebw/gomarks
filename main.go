@@ -564,7 +564,7 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	} 
 
-	_, err = db.Exec("INSERT INTO items (name, url, singleword) VALUES (?, ?, ?)", name, url, singleword)
+	_, err = db.Exec("INSERT INTO items (name, url, singleword) VALUES (LOWER(?), ?, ?)", name, url, singleword)
 	if err != nil {
 		http.Error(w, "Failed to add shortlink. Ensure the keyword is unique.", http.StatusInternalServerError)
 		return
