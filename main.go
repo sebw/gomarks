@@ -393,8 +393,18 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		
 
-		<div class="table-wrapper">
-		<table class="links">
+	<div style="margin-bottom: 10px;">
+		<input 
+			type="text"
+			id="urlSearch" 
+			placeholder="Search your destination URLs" 
+			onkeyup="filterTable()" 
+			style="padding: 8px; width: 300px; border: 1px solid #ccc; border-radius: 4px;"
+		>
+	</div>
+
+	<div class="table-wrapper">
+		<table class="links" id="linksTable">
 			<tr>
 				<th style="text-align: left; width: 150px" data-sort="keyword" data-type="string" onclick="sortTable(0)">Keyword ↕️</th>
 				<th style="width: 200px;" data-sort="url" data-type="string" onclick="sortTable(1)">Destination URL ↕️</th>
@@ -404,22 +414,46 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			{{range .Items}}
 			<tr>
 				<td>
-				<code id="keyword">
-					<a href="/go/?q={{.Name}}" target="_blank">
-					{{.Name}}
-					</a>
-				</code>
-				{{if eq .Singleword 1}} 1️⃣{{end}}
+					<code id="keyword">
+						<a href="/go/?q={{.Name}}" target="_blank">
+							{{.Name}}
+						</a>
+					</code>
+					{{if eq .Singleword 1}} 1️⃣{{end}}
 				</td>
 				<td><a href="{{.URL}}" target="_blank">{{.URL}}</a></td>
 				<td style="text-align: center;">{{.Count}}</td>
-				<td style="text-align: center;"><a title="Reset visit count" href="/reset/{{.Name}}">♻️</a> 
-				<a title="Edit shortcut" href="/mod/{{.Name}}">✍🏻</a> 
-				<a title="Delete shortcut" href="/del/{{.Name}}">❌</a></td>
+				<td style="text-align: center;">
+					<a title="Reset visit count" href="/reset/{{.Name}}">♻️</a> 
+					<a title="Edit shortcut" href="/mod/{{.Name}}">✍🏻</a> 
+					<a title="Delete shortcut" href="/del/{{.Name}}">❌</a>
+				</td>
 			</tr>
 			{{end}}
 		</table>
-		</div>
+	</div>
+
+	<script>
+	function filterTable() {
+		const input = document.getElementById("urlSearch");
+		const filter = input.value.toLowerCase();
+		const table = document.getElementById("linksTable");
+		const rows = table.getElementsByTagName("tr");
+
+		// Start from index 1 to skip the header row
+		for (let i = 1; i < rows.length; i++) {
+			const urlCell = rows[i].getElementsByTagName("td")[1]; // Second column is URL
+			if (urlCell) {
+				const urlText = urlCell.textContent || urlCell.innerText;
+				if (urlText.toLowerCase().indexOf(filter) > -1) {
+					rows[i].style.display = "";
+				} else {
+					rows[i].style.display = "none";
+				}
+			}
+		}
+	}
+	</script>
 
 		<h2>Last 30 queries</h2>
 
