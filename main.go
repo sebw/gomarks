@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"path/filepath"
+	"encoding/json"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -125,14 +125,11 @@ func main() {
 
 	// Serve static files
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
-	http.HandleFunc("/opensearch.xml", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/opensearchdescription+xml")
-		http.ServeFile(w, r, filepath.Join("./static", "opensearch.xml"))
-	})
 
 	// Handlers
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/add", handleAdd)
+	http.HandleFunc("/go", handleRedirect)
 	http.HandleFunc("/go/", handleRedirect)
 	http.HandleFunc("/reset/", handleReset)
 	http.HandleFunc("/reset-all", handleResetAll)
@@ -147,10 +144,59 @@ func main() {
 	http.HandleFunc("/clear/", handleClear)
 	http.HandleFunc("/backup", handleBackup)
 	http.HandleFunc("/help/", handleHelp)
+	http.HandleFunc("/suggest", suggestHandler)
+	http.HandleFunc("/suggest/", suggestHandler)
 
 	// Start the server
 	log.Println("GoMarks 🐇 is running on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func suggestHandler(w http.ResponseWriter, r *http.Request) {
+	query := strings.TrimSpace(strings.ToLower(r.URL.Query().Get("q")))
+
+	if query == "" {
+		writeSuggestions(w, query, []string{})
+		return
+	}
+
+	rows, err := db.Query(`
+		SELECT name
+		FROM items
+		WHERE name LIKE ? || '%'
+		ORDER BY
+			CASE WHEN name = ? THEN 0 ELSE 1 END,
+			count DESC,
+			name ASC
+		LIMIT 6
+	`, query, query)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	suggestions := make([]string, 0, 6)
+
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err == nil {
+			suggestions = append(suggestions, name)
+		}
+	}
+
+	writeSuggestions(w, query, suggestions)
+}
+
+func writeSuggestions(w http.ResponseWriter, query string, suggestions []string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	_ = json.NewEncoder(w).Encode([]interface{}{
+		query,
+		suggestions,
+	})
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -229,7 +275,6 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>
-	    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GoMarks">
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>GoMarks</title>
@@ -317,7 +362,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260412</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260425</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 </br>
 </br>
@@ -1514,6 +1559,8 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 	Click Add</p>
 
 	Give the search engine a name and use this URL <code>{{.BaseURL}}/go/?q=%s</code></p>
+
+	Optionally you can also specify the suggestion engine with this URL <code>{{.BaseURL}}/suggest/?q=%s</code></p>
 
 	You can also use <a href="https://addons.mozilla.org/en-GB/firefox/addon/add-custom-search-engine/">this add-on</a>.</p>
 <br>
