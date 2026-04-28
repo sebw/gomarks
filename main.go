@@ -32,6 +32,32 @@ func getBaseURL(r *http.Request) string {
 	return scheme + "://" + r.Host
 }
 
+func openSearchHandler(w http.ResponseWriter, r *http.Request) {
+	host := r.Host
+
+	// Detect scheme (important behind proxies like Cloudflare)
+	scheme := "https"
+	if r.Header.Get("X-Forwarded-Proto") == "http" {
+		scheme = "http"
+	}
+
+	baseURL := fmt.Sprintf("%s://%s", scheme, host)
+
+	w.Header().Set("Content-Type", "application/opensearchdescription+xml")
+
+	fmt.Fprintf(w, `<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>GoMarks</ShortName>
+  <Description>GoMarks</Description>
+
+  <Url type="text/html" method="GET"
+       template="%s/go/?q={searchTerms}" />
+
+  <Url type="application/x-suggestions+json" method="GET"
+       template="%s/suggest/?q={searchTerms}" />
+</OpenSearchDescription>`, baseURL, baseURL)
+}
+
 func main() {
 	// Initialize the database
 	var err error
@@ -146,6 +172,7 @@ func main() {
 	http.HandleFunc("/help/", handleHelp)
 	http.HandleFunc("/suggest", suggestHandler)
 	http.HandleFunc("/suggest/", suggestHandler)
+	http.HandleFunc("/opensearch.xml", openSearchHandler)
 
 	// Start the server
 	log.Println("GoMarks 🐇 is running on http://localhost:8080")
@@ -158,6 +185,8 @@ func suggestHandler(w http.ResponseWriter, r *http.Request) {
 	if query == "" {
 		writeSuggestions(w, query, []string{})
 		return
+	} else {
+		log.Println("Suggestion query: " + query)
 	}
 
 	rows, err := db.Query(`
@@ -277,6 +306,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GoMarks">
 		<title>GoMarks</title>
 		<link rel="stylesheet" href="/static/style.css">
 		<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png">
