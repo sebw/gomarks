@@ -185,8 +185,6 @@ func suggestHandler(w http.ResponseWriter, r *http.Request) {
 	if query == "" {
 		writeSuggestions(w, query, []string{})
 		return
-	} else {
-		log.Println("Suggestion query: " + query)
 	}
 
 	rows, err := db.Query(`
@@ -392,7 +390,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 		<h2><a href=".">GoMarks <img src="/static/favicon.png" width="32" height="32"></a></h2>
 
-		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">v20260425</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
+		You have {{.Countlinks}} shortcuts | <a href="/fallback">Fallback search engine</a> <code>{{.Fallback}}</code> | <a href="/help">Help</a> | <a href="https://github.com/sebw/GoMarks/">Version 20260428</a> | 👨‍💻 <a href="https://github.com/sebw/">@sebw</a>
 
 </br>
 </br>
@@ -1590,7 +1588,9 @@ func handleHelp(w http.ResponseWriter, r *http.Request) {
 
 	Give the search engine a name and use this URL <code>{{.BaseURL}}/go/?q=%s</code></p>
 
-	Optionally you can also specify the suggestion engine with this URL <code>{{.BaseURL}}/suggest/?q=%s</code></p>
+	Optionally you can also configure the shortcut suggestions with this URL <code>{{.BaseURL}}/suggest/?q=%s</code>.</p>
+	
+	The suggestion endpoint must be publicly available and not behind any authentication. This is a Firefox limitation.</p>
 
 	You can also use <a href="https://addons.mozilla.org/en-GB/firefox/addon/add-custom-search-engine/">this add-on</a>.</p>
 <br>
