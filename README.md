@@ -36,6 +36,7 @@ Resets every 20 minutes!
 - can run locally or publicly (read security section!)
 - single page web interface
 - can be used as your default search engine in Firefox, Chrome, Safari and others.
+- suggestion URL endpoint suggests your shortcuts in your URL bar (tested on Firefox only)
 - setup doesn't require DNS wizardry or local host files tweaking!
 - can be used through iPhone automation and widget (see screenshots)
 - action keywords `!add`, `!mod`, `!del` allow you to manipulate your shortcuts directly from your browser URL bar
