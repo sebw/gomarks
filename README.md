@@ -64,7 +64,7 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 docker run -d --name gomarks --restart unless-stopped -v -e HOST_SEARCH=gomarks.example.com -e HOST_SUGGEST=suggestion.example.com /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
 
-The HOST_SEARCH and HOST_SUGGEST variables are optional. They are used for the `opensearch.xml` to automatically add GoMarks as search engine in browsers. The suggestion URL can't be behind authentication so you most likely want to expose it behind a different hostname.
+The `HOST_SEARCH` and `HOST_SUGGEST` variables are optional. They are used for templating `opensearch.xml` which allows to add GoMarks as search engine in web browsers.
 
 Your GoMarks instance runs at `http://localhost:8080`.
 
@@ -78,6 +78,8 @@ There's no authentication, users management or certificates.
 An internet exposed gomarks can be used maliciously.
 
 You MUST secure GoMarks behind things like Let's Encrypt, Authentik, Authelia, PocketID or Cloudflare.
+
+Suggestion URL do not work when exposed behind authentication so you most likely want to expose it behind a different hostname. This is the reason for `HOST_SEARCH` and `HOST_SUGGEST` variables.
 
 You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zero-trust-authentik/) to secure GoMarks (SSO + HTTPS) behind Cloudflare and Authentik or [this guide](https://blog.wains.be/2026/2026-03-02-cloudflare-zero-trust-pocketid/) for Cloudflare and PocketID.
 
