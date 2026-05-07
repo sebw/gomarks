@@ -79,7 +79,7 @@ An internet exposed gomarks can be used maliciously.
 
 You MUST secure GoMarks behind things like Let's Encrypt, Authentik, Authelia, PocketID or Cloudflare.
 
-Suggestion URL do not work when exposed behind authentication so you most likely want to expose it behind a different hostname. This is the reason for `HOST_SEARCH` and `HOST_SUGGEST` variables.
+Suggestion URL do not work when exposed behind authentication so you most likely want to expose the `suggest` endpoint behind a hostname with no security. This is the reason for `HOST_SEARCH` and `HOST_SUGGEST` variables.
 
 You can follow [this guide](https://blog.wains.be/2023/2023-01-07-cloudflare-zero-trust-authentik/) to secure GoMarks (SSO + HTTPS) behind Cloudflare and Authentik or [this guide](https://blog.wains.be/2026/2026-03-02-cloudflare-zero-trust-pocketid/) for Cloudflare and PocketID.
 
