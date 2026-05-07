@@ -64,7 +64,7 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 docker run -d --name gomarks --restart unless-stopped -v -e HOST_SEARCH=gomarks.example.com -e HOST_SUGGEST=suggestion.example.com /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
 
-The `HOST_SEARCH` and `HOST_SUGGEST` variables are optional. They are used for templating `opensearch.xml` which allows to add GoMarks as search engine in web browsers.
+The `HOST_SEARCH` and `HOST_SUGGEST` variables are optional. They are used for templating `opensearch.xml` which allows to add GoMarks as search engine in web browsers in a click. You can still add GoMarks to web browsers manually. Check the help page.
 
 Your GoMarks instance runs at `http://localhost:8080`.
 
