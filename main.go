@@ -41,21 +41,40 @@ func openSearchHandler(w http.ResponseWriter, r *http.Request) {
 		scheme = "http"
 	}
 
-	baseURL := fmt.Sprintf("%s://%s", scheme, host)
+	// auto detect base URL
+	searchURL := fmt.Sprintf("%s://%s", scheme, host)
+	suggestURL := fmt.Sprintf("%s://%s", scheme, host)
+
+	// Override with environment variables
+	if hostSearch := os.Getenv("HOST_SEARCH"); hostSearch != "" {
+		if !strings.HasPrefix(hostSearch, "http://") &&
+			!strings.HasPrefix(hostSearch, "https://") {
+			hostSearch = scheme + "://" + hostSearch
+		}
+		searchURL = hostSearch
+	}
+
+	if hostSuggest := os.Getenv("HOST_SUGGEST"); hostSuggest != "" {
+		if !strings.HasPrefix(hostSuggest, "http://") &&
+			!strings.HasPrefix(hostSuggest, "https://") {
+			hostSuggest = scheme + "://" + hostSuggest
+		}
+		suggestURL = hostSuggest
+	}
 
 	w.Header().Set("Content-Type", "application/opensearchdescription+xml")
 
 	fmt.Fprintf(w, `<?xml version="1.0" encoding="UTF-8"?>
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-  <ShortName>GoMarks</ShortName>
-  <Description>GoMarks</Description>
+	<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>GoMarks</ShortName>
+	<Description>GoMarks</Description>
 
-  <Url type="text/html" method="GET"
-       template="%s/go/?q={searchTerms}" />
+	<Url type="text/html" method="GET"
+		template="%s/go?q={searchTerms}" />
 
-  <Url type="application/x-suggestions+json" method="GET"
-       template="%s/suggest/?q={searchTerms}" />
-</OpenSearchDescription>`, baseURL, baseURL)
+	<Url type="application/x-suggestions+json" method="GET"
+		template="%s/suggest?q={searchTerms}" />
+	</OpenSearchDescription>`, searchURL, suggestURL)
 }
 
 func main() {

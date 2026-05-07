@@ -61,8 +61,10 @@ Oh, you wanted to know why the logo is a bunny? Historically one of the first Go
 ## Docker installation 
 
 ```bash
-docker run -d --name gomarks --restart unless-stopped -v /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
+docker run -d --name gomarks --restart unless-stopped -v -e HOST_SEARCH=gomarks.example.com -e HOST_SUGGEST=suggestion.example.com /opt/docker/gomarks:/data -p 8080:8080 ghcr.io/sebw/gomarks:latest
 ```
+
+The HOST_SEARCH and HOST_SUGGEST variables are optional. They are used for the `opensearch.xml` to automatically add GoMarks as search engine in browsers. The suggestion URL can't be behind authentication so you most likely want to expose it behind a different hostname.
 
 Your GoMarks instance runs at `http://localhost:8080`.
 
